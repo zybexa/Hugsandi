@@ -114,7 +114,7 @@ function renderBlockInner(block: Block): string {
 
       const contentBg = '#ffffff';
       return `${d.imageSrc?.trim() ? `<tr>
-  <td style="padding: 0; line-height: 0; background-color: ${contentBg};">
+  <td style="padding: 0; line-height: 0; background-color: ${contentBg}; border-radius: 24px 24px 0 0;">
     <img src="${d.imageSrc}" alt="${escapeHtml(d.imageAlt)}" width="100%" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0; border-radius: 24px 24px 0 0;" />
   </td>
 </tr>` : ''}
