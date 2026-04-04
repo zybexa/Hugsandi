@@ -97,7 +97,6 @@ export default function LivePreview({ design }: LivePreviewProps) {
           title={t('preview.iframeTitle')}
           className="h-full border-0"
           style={{ width: '402px', maxWidth: '100%' }}
-          sandbox="allow-same-origin allow-scripts"
         />
       </div>
     </div>
