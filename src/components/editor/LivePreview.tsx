@@ -26,8 +26,10 @@ export default function LivePreview({ design }: LivePreviewProps) {
         ? (doc.documentElement?.scrollTop || doc.body?.scrollTop || 0)
         : 0;
 
-      // Use srcdoc instead of doc.write() to avoid sandbox script-execution warnings
-      iframe.srcdoc = html;
+      // Strip Google Fonts <link> to avoid sandbox script-execution warnings
+      // (the font is needed in sent emails but not in the sandboxed preview)
+      const previewHtml = html.replace(/<link[^>]*fonts\.googleapis\.com[^>]*>/gi, '');
+      iframe.srcdoc = previewHtml;
       initializedRef.current = true;
 
       const handleLoad = () => {
