@@ -154,9 +154,9 @@ export default function Navbar() {
               </Link>
               <button
                 role="menuitem"
-                onClick={() => {
+                onClick={async () => {
                   setDropdownOpen(false);
-                  document.cookie = 'hugsandi_session=; path=/; max-age=0';
+                  await fetch('/api/auth/logout', { method: 'POST' });
                   window.location.href = '/login';
                 }}
                 className="block w-full px-4 py-2.5 text-[0.8rem] text-skin-text-primary text-left bg-transparent border-none cursor-pointer transition-colors hover:bg-skin-tertiary"
