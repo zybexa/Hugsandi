@@ -6,31 +6,32 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   const supabase = getSupabase();
 
-  const { data: lists, error } = await supabase
-    .from('email_lists')
-    .select('id, name, created_at')
-    .order('created_at', { ascending: false });
+  const [listsResult, countsResult] = await Promise.all([
+    supabase
+      .from('email_lists')
+      .select('id, name, created_at')
+      .order('created_at', { ascending: false }),
+    supabase.rpc('get_subscriber_counts'),
+  ]);
 
+  const { data: lists, error } = listsResult;
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Get subscriber counts
-  const listsWithCounts = await Promise.all(
-    (lists || []).map(async (list) => {
-      const { count } = await supabase
-        .from('subscribers')
-        .select('*', { count: 'exact', head: true })
-        .eq('list_id', list.id);
+  const countMap = new Map<string, number>();
+  if (countsResult.data) {
+    for (const row of countsResult.data) {
+      countMap.set(row.list_id, row.count);
+    }
+  }
 
-      return {
-        id: list.id,
-        name: list.name,
-        createdAt: list.created_at,
-        subscriberCount: count || 0,
-      };
-    })
-  );
+  const listsWithCounts = (lists || []).map((list) => ({
+    id: list.id,
+    name: list.name,
+    createdAt: list.created_at,
+    subscriberCount: countMap.get(list.id) || 0,
+  }));
 
   return NextResponse.json(listsWithCounts);
 }

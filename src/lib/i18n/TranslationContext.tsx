@@ -31,6 +31,7 @@ interface TranslationContextValue {
   saveTranslations: (overrides: DbOverrides) => Promise<boolean>;
   allKeys: string[];
   ready: boolean;
+  rawDefaults: Record<string, unknown> | null;
 }
 
 function interpolate(str: string, vars?: Record<string, string | number>): string {
@@ -69,6 +70,7 @@ const defaultContext: TranslationContextValue = {
   saveTranslations: () => Promise.resolve(false),
   allKeys: Object.keys(en),
   ready: false,
+  rawDefaults: null,
 };
 
 const TranslationContext = createContext<TranslationContextValue>(defaultContext);
@@ -77,6 +79,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>('is');
   const [overrides, setOverrides] = useState<DbOverrides>({ en: {}, is: {} });
   const [ready, setReady] = useState(false);
+  const [rawDefaults, setRawDefaults] = useState<Record<string, unknown> | null>(null);
 
   // Load language + translations from API on mount
   useEffect(() => {
@@ -84,6 +87,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) {
+          setRawDefaults(data);
           if (data.language === 'is' || data.language === 'en') {
             setLangState(data.language);
           }
@@ -176,6 +180,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
         saveTranslations,
         allKeys: defaultContext.allKeys,
         ready,
+        rawDefaults,
       }}
     >
       {children}

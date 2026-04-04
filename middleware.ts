@@ -8,6 +8,8 @@ export function middleware(request: NextRequest) {
   if (
     pathname === '/login' ||
     pathname === '/api/auth' ||
+    pathname === '/subscribe-test' ||
+    pathname === '/api/subscribe' ||
     pathname.startsWith('/api/webhooks/') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/view/') ||

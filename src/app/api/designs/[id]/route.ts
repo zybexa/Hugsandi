@@ -39,12 +39,21 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   const { name, globalStyle, blocks } = body;
 
   const supabase = getSupabase();
+  const blockList = Array.isArray(blocks) ? blocks : [];
+  const contentCards = blockList.filter((b: { data?: { type?: string } }) => b.data?.type === 'content-card');
+  const isComplete = contentCards.length > 0 && contentCards.every((b: { data?: { title?: string; body?: string; ctaText?: string; ctaUrl?: string } }) => {
+    const d = b.data;
+    return d && d.title?.trim() && d.body?.trim() && d.ctaText?.trim() && d.ctaUrl?.trim();
+  });
+
   const { error } = await supabase
     .from('designs')
     .update({
       name,
       global_style: globalStyle,
       blocks,
+      block_count: blockList.length,
+      is_complete: isComplete,
       updated_at: new Date().toISOString(),
     })
     .eq('id', params.id);

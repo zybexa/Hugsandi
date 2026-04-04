@@ -67,7 +67,14 @@ export default function DashboardPage() {
     }
   }, [t]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  // Prefetch newsletters immediately on mount, don't wait for translations
+  useEffect(() => {
+    fetch(`/api/newsletters?t=${Date.now()}`, { cache: 'no-store' })
+      .then((res) => { if (res.ok) return res.json(); throw new Error(); })
+      .then(setData)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   function handleCreate() {
     if (!createName.trim()) return;
@@ -159,13 +166,7 @@ export default function DashboardPage() {
           ) : !data || data.newsletters.length === 0 ? (
             <div className="text-center py-12 text-skin-text-muted">
               <p className="text-lg mb-2">{t('dash.noNewsletters')}</p>
-              <p className="text-sm mb-6">{t('dash.noNewslettersHint')}</p>
-              <button
-                onClick={() => { setShowCreateModal(true); setCreateName('');  }}
-                className="px-4 py-2 bg-skin-accent hover:bg-skin-accent-hover text-white text-sm font-semibold rounded-md shadow-skin transition-all"
-              >
-                {t('dash.createNewsletter')}
-              </button>
+              <p className="text-sm">{t('dash.noNewslettersHint')}</p>
             </div>
           ) : (
             <>
@@ -232,12 +233,6 @@ export default function DashboardPage() {
                               ) : (
                                 <>
                                   <button
-                                    onClick={() => router.push(`/editor?id=${nl.id}`)}
-                                    className="px-3 py-1 text-xs font-medium rounded-md border border-skin-border-ui bg-skin-tertiary hover:bg-skin-elevated text-skin-text-secondary transition-colors"
-                                  >
-                                    {t('common.edit')}
-                                  </button>
-                                  <button
                                     onClick={() => {
                                       if (!canSend) return;
                                       setSendNewsletter(nl);
@@ -251,8 +246,14 @@ export default function DashboardPage() {
                                     {t('dash.send')}
                                   </button>
                                   <button
+                                    onClick={() => router.push(`/editor?id=${nl.id}`)}
+                                    className="px-3 py-1 text-xs font-medium rounded-md border border-skin-text-muted bg-skin-tertiary hover:bg-skin-elevated text-skin-text-secondary transition-colors"
+                                  >
+                                    {t('common.edit')}
+                                  </button>
+                                  <button
                                     onClick={() => setDeleteNewsletter(nl)}
-                                    className="px-2 py-1 text-xs rounded-md text-skin-danger hover:bg-skin-danger-bg border border-transparent hover:border-skin-danger-border transition-colors"
+                                    className="px-2 py-1 text-xs rounded-md text-skin-danger hover:bg-skin-danger-bg border border-skin-danger hover:border-skin-danger-border transition-colors"
                                   >
                                     {t('common.delete')}
                                   </button>

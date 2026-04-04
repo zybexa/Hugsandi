@@ -26,30 +26,36 @@ export async function POST(request: Request) {
   const supabase = getSupabase();
   const rawBuffer = Buffer.from(await file.arrayBuffer());
 
-  // Optimize image with Sharp
+  // Optimize image with Sharp (skip GIFs to preserve animation)
   let optimized: Buffer;
   let outputType: string;
+  const isGif = file.type === 'image/gif';
   const isPng = file.type === 'image/png';
 
-  try {
-    let pipeline = sharp(rawBuffer).resize({ width: MAX_WIDTH, withoutEnlargement: true });
-
-    if (isPng) {
-      pipeline = pipeline.png({ compressionLevel: 9, adaptiveFiltering: true });
-      outputType = 'image/png';
-    } else {
-      pipeline = pipeline.jpeg({ quality: 82, mozjpeg: true });
-      outputType = 'image/jpeg';
-    }
-
-    optimized = await pipeline.rotate().toBuffer();
-  } catch {
-    // If Sharp fails, fall back to original
+  if (isGif) {
     optimized = rawBuffer;
-    outputType = file.type;
+    outputType = 'image/gif';
+  } else {
+    try {
+      let pipeline = sharp(rawBuffer).resize({ width: MAX_WIDTH, withoutEnlargement: true });
+
+      if (isPng) {
+        pipeline = pipeline.png({ compressionLevel: 9, adaptiveFiltering: true });
+        outputType = 'image/png';
+      } else {
+        pipeline = pipeline.jpeg({ quality: 82, mozjpeg: true });
+        outputType = 'image/jpeg';
+      }
+
+      optimized = await pipeline.rotate().toBuffer();
+    } catch {
+      // If Sharp fails, fall back to original
+      optimized = rawBuffer;
+      outputType = file.type;
+    }
   }
 
-  const ext = isPng ? 'png' : 'jpg';
+  const ext = isGif ? 'gif' : isPng ? 'png' : 'jpg';
   const filename = `${nanoid()}.${ext}`;
 
   const { error } = await supabase.storage

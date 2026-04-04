@@ -175,6 +175,7 @@ const is: Record<string, string> = {
 
   // ── Lists Page ──────────────────────────────────────
   'lists.title': 'Listarnir þínir',
+  'lists.subscribers': 'Áskrifendur',
   'lists.newListPlaceholder': 'Heiti nýs lista',
   'lists.noLists': 'Engir listar ennþá. Búðu til einn hér að ofan.',
   'lists.subscriberCount_one': '{count} áskrifandi',

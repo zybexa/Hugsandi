@@ -1,0 +1,25 @@
+<form id="newsletter-form">
+  <input type="email" id="newsletter-email" placeholder="Netfangið þitt" required />
+  <button type="submit">Gerast áskrifandi</button>
+</form>
+
+<script>
+document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('newsletter-email').value;
+
+  const res = await fetch('https://hugsandi-email.vercel.app/api/subscribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+
+  if (res.ok) {
+    alert('Takk! Þú hefur verið skráð/ur.');
+  } else if (res.status === 409) {
+    alert('Þetta netfang er þegar skráð.');
+  } else {
+    alert('Villa kom upp. Reyndu aftur.');
+  }
+});
+</script>

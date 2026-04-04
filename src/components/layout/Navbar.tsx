@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n';
 
 export default function Navbar() {
@@ -55,13 +56,13 @@ export default function Navbar() {
     <nav className="flex items-center justify-between px-6 h-16 bg-[var(--bg-secondary)] border-b border-skin-border-ui sticky top-0 z-[100]">
       {/* Brand */}
       <div className="flex items-center">
-        <a href="/" className="flex items-center">
+        <Link href="/" className="flex items-center">
           <img
             src={lightMode ? '/logo-dark.png' : '/logo-white.png'}
             alt="Hugsandi"
             className="h-8 object-contain"
           />
-        </a>
+        </Link>
       </div>
 
       {/* Nav links */}
@@ -69,7 +70,7 @@ export default function Navbar() {
         {navLinks.map((link) => {
           const isActive = !isEditor && pathname === link.href;
           return (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               aria-current={isActive ? 'page' : undefined}
@@ -80,7 +81,7 @@ export default function Navbar() {
               }`}
             >
               {link.label}
-            </a>
+            </Link>
           );
         })}
       </div>

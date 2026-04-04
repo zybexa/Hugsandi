@@ -23,12 +23,21 @@ export async function POST(request: Request) {
   const { name, globalStyle, blocks } = body;
 
   const supabase = getSupabase();
+  const blockList = blocks || [];
+  const contentCards = blockList.filter((b: { data?: { type?: string } }) => b.data?.type === 'content-card');
+  const isComplete = contentCards.length > 0 && contentCards.every((b: { data?: { title?: string; body?: string; ctaText?: string; ctaUrl?: string } }) => {
+    const d = b.data;
+    return d && d.title?.trim() && d.body?.trim() && d.ctaText?.trim() && d.ctaUrl?.trim();
+  });
+
   const { data, error } = await supabase
     .from('designs')
     .insert({
       name: name || 'Untitled Newsletter',
       global_style: globalStyle ? { ...DEFAULT_GLOBAL_STYLE, ...globalStyle } : DEFAULT_GLOBAL_STYLE,
-      blocks: blocks || [],
+      blocks: blockList,
+      block_count: blockList.length,
+      is_complete: isComplete,
     })
     .select('id')
     .single();

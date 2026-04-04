@@ -6,11 +6,11 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   const supabase = getSupabase();
 
-  // Fetch designs, sends, and subscriber count in parallel
+  // Fetch lightweight design metadata, sends, and subscriber count in parallel
   const [designsResult, sendsResult, subscriberResult] = await Promise.all([
     supabase
       .from('designs')
-      .select('id, name, blocks, created_at, updated_at')
+      .select('id, name, created_at, updated_at, block_count, is_complete')
       .order('updated_at', { ascending: false }),
     supabase
       .from('newsletter_sends')
@@ -46,21 +46,13 @@ export async function GET() {
     const deliveredCount = send?.delivered_count ?? 0;
     const openedCount = send?.opened_count ?? 0;
 
-    // Check if all content cards are complete
-    const blocks = Array.isArray(design.blocks) ? design.blocks : [];
-    const contentCards = blocks.filter((b: { data?: { type?: string } }) => b.data?.type === 'content-card');
-    const isComplete = contentCards.length > 0 && contentCards.every((b: { data?: { title?: string; body?: string; ctaText?: string; ctaUrl?: string } }) => {
-      const d = b.data;
-      return d && d.title?.trim() && d.body?.trim() && d.ctaText?.trim() && d.ctaUrl?.trim();
-    });
-
     return {
       id: design.id,
       name: design.name,
       createdAt: design.created_at,
       updatedAt: design.updated_at,
-      blockCount: blocks.length,
-      isComplete,
+      blockCount: design.block_count ?? 0,
+      isComplete: design.is_complete ?? false,
       lastSentAt: send?.sent_at ?? null,
       recipientCount,
       deliveredCount,

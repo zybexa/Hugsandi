@@ -175,6 +175,7 @@ const en: Record<string, string> = {
 
   // ── Lists Page ──────────────────────────────────────
   'lists.title': 'Your Lists',
+  'lists.subscribers': 'Subscribers',
   'lists.newListPlaceholder': 'New list name',
   'lists.noLists': 'No lists yet. Create one above.',
   'lists.subscriberCount_one': '{count} subscriber',

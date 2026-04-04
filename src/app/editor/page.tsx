@@ -4,7 +4,7 @@ import { Suspense, useReducer, useState, useCallback, useEffect, useRef } from '
 import { useSearchParams } from 'next/navigation';
 import { arrayMove } from '@dnd-kit/sortable';
 import { BlockData, BlockStyle, BlockType, Design, DesignImage } from '@/types/design';
-import { DEFAULT_GLOBAL_STYLE, createDefaultBlock, createDefaultBlocks, getSavedGlobalStyle, fetchDefaults, SavedDefaults } from '@/lib/defaults';
+import { DEFAULT_GLOBAL_STYLE, createDefaultBlock, createDefaultBlocks, getSavedGlobalStyle, SavedDefaults } from '@/lib/defaults';
 import { useTranslation } from '@/lib/i18n';
 import BlockToolbar from '@/components/editor/BlockToolbar';
 import EditorCanvas from '@/components/editor/EditorCanvas';
@@ -95,7 +95,7 @@ export default function EditorPage() {
 }
 
 function EditorContent() {
-  const { t, lang } = useTranslation();
+  const { t, lang, rawDefaults: cachedDefaults } = useTranslation();
   const searchParams = useSearchParams();
   const designId = searchParams.get('id');
   const nameParam = searchParams.get('name');
@@ -125,23 +125,22 @@ function EditorContent() {
     return () => window.removeEventListener('beforeunload', handler);
   }, []);
 
-  // Fetch server defaults and create default blocks for new newsletters
+  // Use cached defaults from translation context to create default blocks immediately
   const [savedDefaults, setSavedDefaults] = useState<SavedDefaults>({});
-  const [mounted, setMounted] = useState(false);
+  const initializedRef2 = useRef(false);
   useEffect(() => {
-    if (mounted) return;
-    setMounted(true);
-    fetchDefaults().then((defaults) => {
-      setSavedDefaults(defaults);
-      if (!designId) {
-        baseDispatch({ type: 'LOAD_DESIGN', design: {
-          name: nameParam || 'Untitled Newsletter',
-          globalStyle: getSavedGlobalStyle(defaults),
-          blocks: createDefaultBlocks(defaults),
-        }});
-      }
-    });
-  }, [mounted, designId, nameParam]);
+    if (initializedRef2.current || !cachedDefaults) return;
+    initializedRef2.current = true;
+    const defaults = cachedDefaults as SavedDefaults;
+    setSavedDefaults(defaults);
+    if (!designId) {
+      baseDispatch({ type: 'LOAD_DESIGN', design: {
+        name: nameParam || 'Untitled Newsletter',
+        globalStyle: getSavedGlobalStyle(defaults),
+        blocks: createDefaultBlocks(defaults),
+      }});
+    }
+  }, [cachedDefaults, designId, nameParam]);
 
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -164,10 +163,10 @@ function EditorContent() {
         if (!res.ok) { setNotFound(true); return null; }
         return res.json();
       }),
-      fetchDefaults(),
       fetch(`/api/designs/${designId}/images`).then((res) => res.ok ? res.json() : []),
-    ]).then(([data, defaults, imgs]) => {
+    ]).then(([data, imgs]) => {
         if (data?.id) {
+          const defaults = (cachedDefaults || {}) as SavedDefaults;
           setSavedDefaults(defaults);
           if (!data.blocks || data.blocks.length === 0) {
             data.blocks = createDefaultBlocks(defaults);
@@ -180,7 +179,7 @@ function EditorContent() {
           if (Array.isArray(imgs)) setImages(imgs);
         }
       });
-  }, [designId]);
+  }, [designId, cachedDefaults]);
 
   const selectedBlock = design.blocks.find((b) => b.id === selectedBlockId) || null;
 
@@ -271,10 +270,8 @@ function EditorContent() {
         )}
 
         <BlockToolbar
-          onAddBlock={async (type) => {
-            const defaults = await fetchDefaults();
-            setSavedDefaults(defaults);
-            dispatch({ type: 'ADD_BLOCK', blockType: type, defaults });
+          onAddBlock={(type) => {
+            dispatch({ type: 'ADD_BLOCK', blockType: type, defaults: savedDefaults });
           }}
           onSave={handleSave}
           saving={saving}
