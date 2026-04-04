@@ -15,7 +15,7 @@ interface ContentCardBlockProps {
   defaultShowStyling?: boolean;
 }
 
-export default function ContentCardBlock({ data, onChange, blockStyle, readOnly }: ContentCardBlockProps) {
+export default function ContentCardBlock({ data, onChange, readOnly }: ContentCardBlockProps) {
   const { t } = useTranslation();
   const [savedDefault, setSavedDefault] = useState(false);
 

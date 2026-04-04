@@ -126,7 +126,7 @@ export function createDefaultBlock(type: BlockType, defaults?: SavedDefaults): B
         ctaSize: '15px',
         ctaBold: true,
       };
-      const savedData = saved?.data ? (() => { const { title, body, ...rest } = saved.data as Record<string, unknown>; return rest; })() : null;
+      const savedData = saved?.data ? (() => { const { title: _t, body: _b, ...rest } = saved.data as Record<string, unknown>; return rest; })() : null;
       const cardData: ContentCardBlockData = savedData
         ? { ...cardDefaults, ...savedData, type: 'content-card', imageSrc: ' ', imageAlt: '' }
         : cardDefaults;

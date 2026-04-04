@@ -118,7 +118,7 @@ export default function HeaderBlock({ data, onChange, blockStyle }: HeaderBlockP
         <button
           type="button"
           onClick={() => {
-            const { headline, ...dataWithoutContent } = data;
+            const { headline: _headline, ...dataWithoutContent } = data;
             saveDefault('header', { data: dataWithoutContent, style: blockStyle }).then(() => {
               setSavedDefault(true);
               setTimeout(() => setSavedDefault(false), 2000);
