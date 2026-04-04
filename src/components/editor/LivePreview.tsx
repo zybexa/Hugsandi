@@ -20,31 +20,35 @@ export default function LivePreview({ design }: LivePreviewProps) {
       const iframe = iframeRef.current;
       if (!iframe) return;
 
+      // Save scroll position before replacing content
       const doc = iframe.contentDocument;
-      if (!doc) return;
-
-      const scrollTop = initializedRef.current
+      const scrollTop = initializedRef.current && doc
         ? (doc.documentElement?.scrollTop || doc.body?.scrollTop || 0)
         : 0;
 
-      doc.open();
-      doc.write(html);
-      doc.close();
+      // Use srcdoc instead of doc.write() to avoid sandbox script-execution warnings
+      iframe.srcdoc = html;
       initializedRef.current = true;
 
-      // Restore scroll position
-      if (scrollTop > 0) {
-        requestAnimationFrame(() => {
-          if (doc.documentElement) doc.documentElement.scrollTop = scrollTop;
-          if (doc.body) doc.body.scrollTop = scrollTop;
-        });
-      }
+      const handleLoad = () => {
+        const newDoc = iframe.contentDocument;
+        if (!newDoc) return;
 
-      // Disable all links in the preview
-      doc.addEventListener('click', (e: Event) => {
-        const target = (e.target as HTMLElement).closest('a');
-        if (target) e.preventDefault();
-      });
+        // Restore scroll position
+        if (scrollTop > 0) {
+          if (newDoc.documentElement) newDoc.documentElement.scrollTop = scrollTop;
+          if (newDoc.body) newDoc.body.scrollTop = scrollTop;
+        }
+
+        // Disable all links in the preview
+        newDoc.addEventListener('click', (e: Event) => {
+          const target = (e.target as HTMLElement).closest('a');
+          if (target) e.preventDefault();
+        });
+
+        iframe.removeEventListener('load', handleLoad);
+      };
+      iframe.addEventListener('load', handleLoad);
     }, 300);
     return () => clearTimeout(timer);
   }, [design]);
