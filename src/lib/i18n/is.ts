@@ -215,6 +215,9 @@ const is: Record<string, string> = {
   'translations.colIcelandic': 'Íslenska',
   'translations.progress': '{count} af {total} þýtt',
   'translations.saveFailed': 'Vistun mistókst',
+
+  // ── Screen size ─────────────────────────────────────
+  'screen.tooSmall': 'Vinsamlegast skoðaðu á stærri skjá',
 };
 
 export default is;
