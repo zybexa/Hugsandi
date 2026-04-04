@@ -82,23 +82,27 @@ export async function POST(request: Request) {
     .update({ status: newStatus, updated_at: new Date().toISOString() })
     .eq('id', recipient.id);
 
-  // Recompute aggregate counts on newsletter_sends
-  const { data: allRecipients } = await supabase
-    .from('send_recipients')
-    .select('status')
-    .eq('send_id', recipient.send_id);
+  // Update aggregate counts using COUNT queries (no row data fetched)
+  const [deliveredResult, openedResult] = await Promise.all([
+    supabase
+      .from('send_recipients')
+      .select('*', { count: 'exact', head: true })
+      .eq('send_id', recipient.send_id)
+      .in('status', ['delivered', 'opened']),
+    supabase
+      .from('send_recipients')
+      .select('*', { count: 'exact', head: true })
+      .eq('send_id', recipient.send_id)
+      .eq('status', 'opened'),
+  ]);
 
-  if (allRecipients) {
-    const deliveredCount = allRecipients.filter(
-      (r) => r.status === 'delivered' || r.status === 'opened'
-    ).length;
-    const openedCount = allRecipients.filter((r) => r.status === 'opened').length;
-
-    await supabase
-      .from('newsletter_sends')
-      .update({ delivered_count: deliveredCount, opened_count: openedCount })
-      .eq('id', recipient.send_id);
-  }
+  await supabase
+    .from('newsletter_sends')
+    .update({
+      delivered_count: deliveredResult.count ?? 0,
+      opened_count: openedResult.count ?? 0,
+    })
+    .eq('id', recipient.send_id);
 
   return NextResponse.json({ received: true });
 }

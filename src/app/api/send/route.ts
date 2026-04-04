@@ -116,7 +116,7 @@ export async function POST(request: Request) {
     status: string;
   }> = [];
 
-  const BATCH_SIZE = 10;
+  const BATCH_SIZE = 25;
   for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
     const batch = subscribers.slice(i, i + BATCH_SIZE);
     const results = await Promise.allSettled(

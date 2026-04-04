@@ -144,14 +144,14 @@ export default function Navbar() {
               <div className="px-4 py-3 text-xs text-skin-text-secondary border-b border-skin-border truncate">
                 {t('nav.admin')}
               </div>
-              <a
+              <Link
                 href="/translations"
                 role="menuitem"
                 onClick={() => setDropdownOpen(false)}
                 className="block w-full px-4 py-2.5 text-[0.8rem] text-skin-text-primary text-left bg-transparent border-none cursor-pointer transition-colors hover:bg-skin-tertiary"
               >
                 {t('nav.translations')}
-              </a>
+              </Link>
               <button
                 role="menuitem"
                 onClick={() => {

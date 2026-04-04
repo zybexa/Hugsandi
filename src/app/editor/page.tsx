@@ -183,6 +183,24 @@ function EditorContent() {
 
   const selectedBlock = design.blocks.find((b) => b.id === selectedBlockId) || null;
 
+  // Stable callbacks for EditorCanvas — dispatch is stable from useReducer
+  const handleBlockDataChange = useCallback((blockId: string, data: BlockData) => {
+    dispatch({ type: 'UPDATE_BLOCK_DATA', blockId, data });
+  }, [dispatch]);
+
+  const handleBlockStyleChange = useCallback((blockId: string, style: BlockStyle) => {
+    dispatch({ type: 'UPDATE_BLOCK_STYLE', blockId, style });
+  }, [dispatch]);
+
+  const handleReorder = useCallback((activeId: string, overId: string) => {
+    dispatch({ type: 'REORDER_BLOCKS', activeId, overId });
+  }, [dispatch]);
+
+  const handleRemoveBlock = useCallback((blockId: string) => {
+    dispatch({ type: 'REMOVE_BLOCK', blockId });
+    setSelectedBlockId((prev) => prev === blockId ? null : prev);
+  }, [dispatch]);
+
   const handleSave = useCallback(async (redirectTo: string = '/') => {
     setSaving(true);
     setSaveError('');
@@ -335,19 +353,10 @@ function EditorContent() {
             blocks={design.blocks}
             selectedBlockId={selectedBlockId}
             onSelectBlock={setSelectedBlockId}
-            onReorder={(activeId, overId) =>
-              dispatch({ type: 'REORDER_BLOCKS', activeId, overId })
-            }
-            onBlockDataChange={(blockId, data) =>
-              dispatch({ type: 'UPDATE_BLOCK_DATA', blockId, data })
-            }
-            onBlockStyleChange={(blockId, style) =>
-              dispatch({ type: 'UPDATE_BLOCK_STYLE', blockId, style })
-            }
-            onRemoveBlock={(blockId) => {
-              dispatch({ type: 'REMOVE_BLOCK', blockId });
-              if (selectedBlockId === blockId) setSelectedBlockId(null);
-            }}
+            onReorder={handleReorder}
+            onBlockDataChange={handleBlockDataChange}
+            onBlockStyleChange={handleBlockStyleChange}
+            onRemoveBlock={handleRemoveBlock}
             readOnly={isSent}
             availableImages={images}
             defaultShowStyling={!!(savedDefaults?.content_card as Record<string, unknown>)?.showStyling}

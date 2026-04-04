@@ -1,6 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+
+let client: SupabaseClient | null = null;
 
 export function getSupabase() {
+  if (client) return client;
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -8,9 +12,11 @@ export function getSupabase() {
     throw new Error('Missing Supabase environment variables');
   }
 
-  return createClient(url, key, {
+  client = createClient(url, key, {
     global: {
       fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }),
     },
   });
+
+  return client;
 }

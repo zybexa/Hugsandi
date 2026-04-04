@@ -48,29 +48,33 @@ export default function ImageGalleryPanel({
 
       const newImages: DesignImage[] = [];
       let failCount = 0;
+      const fileArray = Array.from(files);
 
-      for (const file of Array.from(files)) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('designId', id);
-
-        try {
-          const res = await fetch('/api/upload', { method: 'POST', body: formData });
-          if (res.ok) {
-            const data = await res.json();
-            if (data.imageId) {
-              newImages.push({
-                id: data.imageId,
-                url: data.url,
-                filename: data.filename,
-                createdAt: data.createdAt || new Date().toISOString(),
-              });
-            }
+      // Upload in parallel batches of 3
+      const BATCH = 3;
+      for (let i = 0; i < fileArray.length; i += BATCH) {
+        const batch = fileArray.slice(i, i + BATCH);
+        const results = await Promise.allSettled(
+          batch.map(async (file) => {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('designId', id!);
+            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            if (!res.ok) throw new Error('Upload failed');
+            return res.json();
+          })
+        );
+        for (const result of results) {
+          if (result.status === 'fulfilled' && result.value.imageId) {
+            newImages.push({
+              id: result.value.imageId,
+              url: result.value.url,
+              filename: result.value.filename,
+              createdAt: result.value.createdAt || new Date().toISOString(),
+            });
           } else {
             failCount++;
           }
-        } catch {
-          failCount++;
         }
       }
 

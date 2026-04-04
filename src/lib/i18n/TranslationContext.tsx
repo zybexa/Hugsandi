@@ -81,22 +81,45 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [rawDefaults, setRawDefaults] = useState<Record<string, unknown> | null>(null);
 
-  // Load language + translations from API on mount
+  // Load language + translations — use localStorage cache to avoid fetch on every navigation
   useEffect(() => {
+    const CACHE_KEY = 'hugsandi_defaults';
+    const CACHE_TTL = 60 * 1000; // 1 minute
+
+    function applyDefaults(data: Record<string, unknown>) {
+      setRawDefaults(data);
+      if (data.language === 'is' || data.language === 'en') {
+        setLangState(data.language as Language);
+      }
+      if (data.translations && typeof data.translations === 'object') {
+        const tr = data.translations as Record<string, Record<string, string>>;
+        setOverrides({
+          en: (tr.en && typeof tr.en === 'object') ? tr.en : {},
+          is: (tr.is && typeof tr.is === 'object') ? tr.is : {},
+        });
+      }
+    }
+
+    // Try cache first
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { data, ts } = JSON.parse(cached);
+        if (Date.now() - ts < CACHE_TTL) {
+          applyDefaults(data);
+          setReady(true);
+          return;
+        }
+      }
+    } catch { /* ignore corrupted cache */ }
+
+    // Fetch from API and cache
     fetch('/api/defaults')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) {
-          setRawDefaults(data);
-          if (data.language === 'is' || data.language === 'en') {
-            setLangState(data.language);
-          }
-          if (data.translations && typeof data.translations === 'object') {
-            setOverrides({
-              en: (data.translations.en && typeof data.translations.en === 'object') ? data.translations.en : {},
-              is: (data.translations.is && typeof data.translations.is === 'object') ? data.translations.is : {},
-            });
-          }
+          applyDefaults(data);
+          try { localStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() })); } catch {}
         }
       })
       .catch(() => {})
@@ -112,6 +135,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 
   const setLang = useCallback((newLang: Language) => {
     setLangState(newLang);
+    try { localStorage.removeItem('hugsandi_defaults'); } catch {}
     fetch('/api/defaults', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -154,6 +178,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
         if (v && v.trim()) filtered.is[k] = v;
       }
       setOverrides(filtered);
+      try { localStorage.removeItem('hugsandi_defaults'); } catch {}
       try {
         const res = await fetch('/api/defaults', {
           method: 'PUT',

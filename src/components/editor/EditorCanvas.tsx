@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo, useCallback } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -23,17 +23,18 @@ import { useTranslation } from '@/lib/i18n';
 
 interface SortableBlockProps {
   block: Block;
+  blockId: string;
   isSelected: boolean;
-  onSelect: () => void;
-  onDataChange: (data: BlockData) => void;
-  onStyleChange: (style: BlockStyle) => void;
-  onRemove: () => void;
+  onSelectBlock: (id: string) => void;
+  onBlockDataChange: (blockId: string, data: BlockData) => void;
+  onBlockStyleChange: (blockId: string, style: BlockStyle) => void;
+  onRemoveBlock: (blockId: string) => void;
   readOnly?: boolean;
   availableImages?: DesignImage[];
   defaultShowStyling?: boolean;
 }
 
-function SortableBlock({ block, isSelected, onSelect, onDataChange, onStyleChange, onRemove, readOnly, availableImages, defaultShowStyling }: SortableBlockProps) {
+const SortableBlock = memo(function SortableBlock({ block, blockId, isSelected, onSelectBlock, onBlockDataChange, onBlockStyleChange, onRemoveBlock, readOnly, availableImages, defaultShowStyling }: SortableBlockProps) {
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(block.data.type === 'header' || block.data.type === 'footer');
   const {
@@ -43,7 +44,7 @@ function SortableBlock({ block, isSelected, onSelect, onDataChange, onStyleChang
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: block.id });
+  } = useSortable({ id: blockId });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -54,11 +55,16 @@ function SortableBlock({ block, isSelected, onSelect, onDataChange, onStyleChang
   const typeKeys: Record<string, string> = { header: 'canvas.typeHeader', footer: 'canvas.typeFooter', 'content-card': 'canvas.typeContentCard' };
   const typeLabel = t(typeKeys[block.data.type] || block.data.type);
 
+  const handleSelect = useCallback(() => onSelectBlock(blockId), [onSelectBlock, blockId]);
+  const handleDataChange = useCallback((data: BlockData) => onBlockDataChange(blockId, data), [onBlockDataChange, blockId]);
+  const handleStyleChange = useCallback((style: BlockStyle) => onBlockStyleChange(blockId, style), [onBlockStyleChange, blockId]);
+  const handleRemove = useCallback(() => onRemoveBlock(blockId), [onRemoveBlock, blockId]);
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      onPointerDown={onSelect}
+      onPointerDown={handleSelect}
       className={`bg-skin-secondary rounded-lg border ${
         isSelected ? 'border-blue-500 ring-1 ring-blue-500' : 'border-skin-border'
       } transition-colors`}
@@ -104,7 +110,7 @@ function SortableBlock({ block, isSelected, onSelect, onDataChange, onStyleChang
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onRemove();
+                handleRemove();
               }}
               className="text-skin-text-muted hover:text-red-400 p-1 transition-colors"
               title={t('canvas.removeBlock')}
@@ -118,12 +124,12 @@ function SortableBlock({ block, isSelected, onSelect, onDataChange, onStyleChang
       </div>
       {!collapsed && (
         <div className={`p-3 ${readOnly ? 'pointer-events-none opacity-60' : ''}`}>
-          <BlockRenderer block={block} onDataChange={onDataChange} onStyleChange={onStyleChange} readOnly={readOnly} availableImages={availableImages} defaultShowStyling={defaultShowStyling} />
+          <BlockRenderer block={block} onDataChange={handleDataChange} onStyleChange={handleStyleChange} readOnly={readOnly} availableImages={availableImages} defaultShowStyling={defaultShowStyling} />
         </div>
       )}
     </div>
   );
-}
+});
 
 interface EditorCanvasProps {
   blocks: Block[];
@@ -184,11 +190,12 @@ export default function EditorCanvas({
             <SortableBlock
               key={block.id}
               block={block}
+              blockId={block.id}
               isSelected={block.id === selectedBlockId}
-              onSelect={() => onSelectBlock(block.id)}
-              onDataChange={(data) => onBlockDataChange(block.id, data)}
-              onStyleChange={(style) => onBlockStyleChange(block.id, style)}
-              onRemove={() => onRemoveBlock(block.id)}
+              onSelectBlock={onSelectBlock}
+              onBlockDataChange={onBlockDataChange}
+              onBlockStyleChange={onBlockStyleChange}
+              onRemoveBlock={onRemoveBlock}
               readOnly={readOnly}
               availableImages={availableImages}
               defaultShowStyling={defaultShowStyling}
