@@ -245,6 +245,9 @@ export function renderEmailHtml(design: Design): string {
   <style>
     .content-outer { max-width: 600px !important; }
     .content-inner { max-width: 600px !important; }
+    @media only screen and (min-width: 960px) {
+      .content-outer { padding-left: 180px !important; padding-right: 180px !important; }
+    }
     @media only screen and (max-width: 480px) {
       .content-outer { max-width: 100% !important; width: 100% !important; box-sizing: border-box !important; padding-left: 16px !important; padding-right: 16px !important; }
       .content-inner { max-width: 100% !important; }
