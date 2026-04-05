@@ -260,7 +260,7 @@ export function renderEmailHtml(design: Design): string {
 <body style="margin: 0; padding: 0; background-color: #FFECE5; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #FFECE5;">
     <tr>
-      <td align="center" class="content-outer" style="padding-top: 20px; padding-bottom: 20px; padding-left: 24px; padding-right: 24px; max-width: 600px;">
+      <td align="center" class="content-outer" style="padding-top: 20px; padding-bottom: 20px; max-width: 600px;">
         <table role="presentation" class="content-inner" cellpadding="0" cellspacing="0" border="0" style="font-family: Instrument Sans, sans-serif; width: 100%; max-width: 600px; margin: 0 auto;">
 ${blocksHtml}
         </table>
