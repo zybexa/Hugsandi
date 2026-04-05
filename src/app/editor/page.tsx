@@ -147,6 +147,8 @@ function EditorContent() {
   const [saveError, setSaveError] = useState('');
   const [notFound, setNotFound] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   // Sent state
   const [isSent, setIsSent] = useState(false);
@@ -270,14 +272,31 @@ function EditorContent() {
       <div className="border-b border-skin-border-ui bg-[var(--bg-secondary)]">
         <div className="flex items-center px-4 py-2 gap-4 border-b border-skin-border">
           <label className="text-xs font-medium text-skin-text-secondary uppercase tracking-[0.04em] flex-shrink-0">{t('editor.nameLabel')}</label>
-          <input
-            type="text"
-            value={design.name}
-            onChange={(e) => dispatch({ type: 'SET_NAME', name: e.target.value })}
-            readOnly={isSent}
-            className="flex-1 bg-transparent text-skin-text-primary text-sm border-none outline-none placeholder-skin-text-muted"
-            placeholder={t('editor.namePlaceholder')}
-          />
+          {editingName ? (
+            <input
+              ref={nameInputRef}
+              type="text"
+              value={design.name}
+              onChange={(e) => dispatch({ type: 'SET_NAME', name: e.target.value })}
+              onBlur={() => setEditingName(false)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === 'Escape') setEditingName(false); }}
+              autoFocus
+              className="flex-1 bg-transparent text-skin-text-primary text-sm border-none outline-none placeholder-skin-text-muted"
+              placeholder={t('editor.namePlaceholder')}
+            />
+          ) : (
+            <>
+              <span className="flex-1 text-skin-text-primary text-sm truncate">{design.name || t('editor.namePlaceholder')}</span>
+              {!isSent && (
+                <button
+                  onClick={() => setEditingName(true)}
+                  className="px-3 py-1 text-xs font-medium rounded-md border border-skin-text-muted bg-skin-tertiary hover:bg-skin-elevated text-skin-text-secondary transition-colors flex-shrink-0"
+                >
+                  {t('editor.changeName')}
+                </button>
+              )}
+            </>
+          )}
         </div>
 
         {/* Sent banner */}

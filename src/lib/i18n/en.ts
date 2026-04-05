@@ -80,6 +80,7 @@ const en: Record<string, string> = {
   'editor.untitledName': 'Untitled Newsletter',
   'editor.nameLabel': 'Name',
   'editor.namePlaceholder': 'Newsletter name',
+  'editor.changeName': 'Change',
   'editor.sentBanner': 'This newsletter was sent on {date}. It is read-only.',
   'editor.notFound': 'Newsletter not found',
   'editor.backToDashboard': 'Back to dashboard',
