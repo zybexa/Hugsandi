@@ -383,7 +383,7 @@ function EditorContent() {
         </div>
 
         {/* Right: live preview */}
-        <div className="w-[402px] border-l border-skin-border">
+        <div className="w-[648px] border-l border-skin-border">
           <LivePreview design={design} />
         </div>
       </div>

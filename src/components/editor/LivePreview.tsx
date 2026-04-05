@@ -96,7 +96,7 @@ export default function LivePreview({ design }: LivePreviewProps) {
           ref={iframeRef}
           title={t('preview.iframeTitle')}
           className="h-full border-0"
-          style={{ width: '402px', maxWidth: '100%' }}
+          style={{ width: '648px', maxWidth: '100%' }}
         />
       </div>
     </div>
