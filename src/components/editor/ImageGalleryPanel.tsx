@@ -165,8 +165,8 @@ export default function ImageGalleryPanel({
       )}
 
       {error && (
-        <div className="bg-skin-danger-bg border border-skin-danger-border rounded-md px-3 py-2 flex items-start gap-2">
-          <p className="text-skin-danger text-xs flex-1 whitespace-pre-line">{error}</p>
+        <div className="bg-skin-danger-bg border border-skin-danger-border rounded-md px-3 py-2 flex items-start gap-2 overflow-hidden">
+          <p className="text-skin-danger text-xs flex-1 whitespace-pre-line break-words min-w-0">{error}</p>
           <button onClick={() => setError('')} className="text-skin-danger hover:text-skin-text-primary text-xs flex-shrink-0">&times;</button>
         </div>
       )}
