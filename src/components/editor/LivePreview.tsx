@@ -91,7 +91,7 @@ export default function LivePreview({ design }: LivePreviewProps) {
           {t('preview.openInBrowser')}
         </button>
       </div>
-      <div className="flex-1 bg-gray-100 overflow-auto flex justify-center">
+      <div className="flex-1 bg-gray-100 overflow-y-auto overflow-x-hidden flex justify-center">
         <iframe
           ref={iframeRef}
           title={t('preview.iframeTitle')}
