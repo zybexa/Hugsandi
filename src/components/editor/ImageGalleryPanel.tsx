@@ -46,14 +46,27 @@ export default function ImageGalleryPanel({
         }
       }
 
+      const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+      const fileArray = Array.from(files);
+      const tooLarge = fileArray.filter((f) => f.size > MAX_SIZE);
+      if (tooLarge.length > 0) {
+        setError(t('gallery.fileTooLarge', { name: tooLarge.map((f) => f.name).join(', ') }));
+        setTimeout(() => setError(''), 5000);
+        // Continue with files that are small enough
+      }
+      const validFiles = fileArray.filter((f) => f.size <= MAX_SIZE);
+      if (validFiles.length === 0) {
+        setUploading(false);
+        return;
+      }
+
       const newImages: DesignImage[] = [];
       let failCount = 0;
-      const fileArray = Array.from(files);
 
       // Upload in parallel batches of 3
       const BATCH = 3;
-      for (let i = 0; i < fileArray.length; i += BATCH) {
-        const batch = fileArray.slice(i, i + BATCH);
+      for (let i = 0; i < validFiles.length; i += BATCH) {
+        const batch = validFiles.slice(i, i + BATCH);
         const results = await Promise.allSettled(
           batch.map(async (file) => {
             const formData = new FormData();

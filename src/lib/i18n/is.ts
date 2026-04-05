@@ -112,6 +112,7 @@ const is: Record<string, string> = {
   'gallery.selectHint': 'Smelltu á mynd til að tengja hana við valið spjald',
   'gallery.upload': 'Hlaða upp mynd',
   'gallery.saveFailed': 'Ekki tókst að vista hönnun',
+  'gallery.fileTooLarge': 'Skrá of stór (hámark 5 MB): {name}',
   'gallery.uploadFailed': 'Upphleðsla mistókst',
   'gallery.uploadFailed_one': '{count} upphleðsla mistókst',
   'gallery.uploadFailed_other': '{count} upphleðslur mistókust',

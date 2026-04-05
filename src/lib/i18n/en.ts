@@ -112,6 +112,7 @@ const en: Record<string, string> = {
   'gallery.selectHint': 'Click an image to assign it to the selected card',
   'gallery.upload': 'Upload Image',
   'gallery.saveFailed': 'Failed to save design',
+  'gallery.fileTooLarge': 'File too large (max 5 MB): {name}',
   'gallery.uploadFailed': 'Upload failed',
   'gallery.uploadFailed_one': '{count} upload failed',
   'gallery.uploadFailed_other': '{count} uploads failed',
