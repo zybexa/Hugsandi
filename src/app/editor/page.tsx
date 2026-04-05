@@ -286,7 +286,7 @@ function EditorContent() {
             />
           ) : (
             <>
-              <span className="text-skin-text-primary text-sm truncate max-w-[300px]">{design.name || t('editor.namePlaceholder')}</span>
+              <span className="px-2 py-1 border border-transparent text-skin-text-primary text-sm truncate max-w-[300px]">{design.name || t('editor.namePlaceholder')}</span>
               {!isSent && (
                 <button
                   onClick={() => setEditingName(true)}
