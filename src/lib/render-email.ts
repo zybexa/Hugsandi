@@ -249,8 +249,8 @@ export function renderEmailHtml(design: Design): string {
       .content-outer { padding-left: 180px !important; padding-right: 180px !important; }
     }
     @media only screen and (max-width: 480px) {
-      .content-outer { max-width: 100% !important; width: 100% !important; box-sizing: border-box !important; padding-left: 16px !important; padding-right: 16px !important; }
-      .content-inner { max-width: 100% !important; }
+      .content-outer { max-width: 100% !important; width: 100% !important; padding-left: 0 !important; padding-right: 0 !important; }
+      .content-inner { max-width: 100% !important; width: calc(100% - 32px) !important; margin-left: 16px !important; margin-right: 16px !important; }
       .footer-stack td.footer-col { display: block !important; width: 100% !important; text-align: center !important; }
       .footer-stack td.footer-col img { margin: 0 auto !important; }
       .footer-stack td.footer-col table { margin: 0 auto !important; }
