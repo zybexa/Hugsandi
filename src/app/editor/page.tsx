@@ -281,12 +281,12 @@ function EditorContent() {
               onBlur={() => setEditingName(false)}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === 'Escape') setEditingName(false); }}
               autoFocus
-              className="flex-1 bg-transparent text-skin-text-primary text-sm border-none outline-none placeholder-skin-text-muted"
+              className="px-2 py-1 bg-skin-input text-skin-text-primary text-sm border border-skin-border-focus rounded outline-none placeholder-skin-text-muted"
               placeholder={t('editor.namePlaceholder')}
             />
           ) : (
             <>
-              <span className="flex-1 text-skin-text-primary text-sm truncate">{design.name || t('editor.namePlaceholder')}</span>
+              <span className="text-skin-text-primary text-sm truncate max-w-[300px]">{design.name || t('editor.namePlaceholder')}</span>
               {!isSent && (
                 <button
                   onClick={() => setEditingName(true)}
