@@ -47,15 +47,22 @@ export default function ImageGalleryPanel({
       }
 
       const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+      const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
       const fileArray = Array.from(files);
+      const errors: string[] = [];
+
+      // Validate file sizes and types
       const tooLarge = fileArray.filter((f) => f.size > MAX_SIZE);
       if (tooLarge.length > 0) {
-        setError(t('gallery.fileTooLarge', { name: tooLarge.map((f) => f.name).join(', ') }));
-        setTimeout(() => setError(''), 5000);
-        // Continue with files that are small enough
+        errors.push(t('gallery.fileTooLarge', { name: tooLarge.map((f) => f.name).join(', ') }));
       }
-      const validFiles = fileArray.filter((f) => f.size <= MAX_SIZE);
+      const invalidType = fileArray.filter((f) => f.size <= MAX_SIZE && !ALLOWED_TYPES.includes(f.type));
+      if (invalidType.length > 0) {
+        errors.push(t('gallery.invalidFileType', { name: invalidType.map((f) => f.name).join(', ') }));
+      }
+      const validFiles = fileArray.filter((f) => f.size <= MAX_SIZE && ALLOWED_TYPES.includes(f.type));
       if (validFiles.length === 0) {
+        setError(errors.join('\n'));
         setUploading(false);
         return;
       }
@@ -73,7 +80,10 @@ export default function ImageGalleryPanel({
             formData.append('file', file);
             formData.append('designId', id!);
             const res = await fetch('/api/upload', { method: 'POST', body: formData });
-            if (!res.ok) throw new Error('Upload failed');
+            if (!res.ok) {
+              const data = await res.json().catch(() => null);
+              throw new Error(data?.error || 'Upload failed');
+            }
             return res.json();
           })
         );
@@ -100,12 +110,13 @@ export default function ImageGalleryPanel({
       }
 
       if (failCount > 0) {
-        setError(tp('gallery.uploadFailed', failCount));
-        setTimeout(() => setError(''), 3000);
+        errors.push(tp('gallery.uploadFailed', failCount));
+      }
+      if (errors.length > 0) {
+        setError(errors.join('\n'));
       }
     } catch {
       setError(t('gallery.uploadFailed'));
-      setTimeout(() => setError(''), 3000);
     } finally {
       setUploading(false);
       e.target.value = '';
@@ -153,7 +164,12 @@ export default function ImageGalleryPanel({
         </label>
       )}
 
-      {error && <p className="text-red-400 text-xs">{error}</p>}
+      {error && (
+        <div className="bg-skin-danger-bg border border-skin-danger-border rounded-md px-3 py-2 flex items-start gap-2">
+          <p className="text-skin-danger text-xs flex-1 whitespace-pre-line">{error}</p>
+          <button onClick={() => setError('')} className="text-skin-danger hover:text-skin-text-primary text-xs flex-shrink-0">&times;</button>
+        </div>
+      )}
 
       {images.length === 0 ? (
         <p className="text-skin-text-muted text-xs text-center py-4">
