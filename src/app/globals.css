@@ -247,6 +247,12 @@ button:focus-visible {
   border-radius: 6px;
 }
 
+button:active:not(:disabled) {
+  transform: scale(0.96);
+  opacity: 0.85;
+  transition: transform 0.08s ease, opacity 0.08s ease;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
