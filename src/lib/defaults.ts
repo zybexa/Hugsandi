@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid';
 import { Block, BlockStyle, BlockType, ContentCardBlockData, GlobalStyle } from '@/types/design';
 
 export const DEFAULT_GLOBAL_STYLE: GlobalStyle = {
-  backgroundColor: '#FAF7F2',
+  backgroundColor: '#FFECE5',
   contentBackgroundColor: '#ffffff',
   maxWidth: '600px',
   fontFamily: 'Arial, Helvetica, sans-serif',

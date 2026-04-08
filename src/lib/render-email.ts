@@ -242,7 +242,7 @@ function renderBlock(block: Block, baseUrl?: string): string {
 
 export function renderEmailHtml(design: Design, baseUrl?: string): string {
   const { blocks } = design;
-  const spacerRow = `<tr><td class="e-canvas" style="padding-top: 16px; line-height: 0; font-size: 0; background-color: #FAF7F2;">&nbsp;</td></tr>`;
+  const spacerRow = `<tr><td class="e-canvas" style="padding-top: 16px; line-height: 0; font-size: 0; background-color: #FFECE5;">&nbsp;</td></tr>`;
   const blocksHtml = blocks.map((b) => renderBlock(b, baseUrl)).join(`\n${spacerRow}\n`);
 
   return `<!DOCTYPE html>
@@ -286,8 +286,8 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
     }
   </style>
 </head>
-<body class="e-canvas" style="margin: 0; padding: 0; background-color: #FAF7F2; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="e-canvas" style="background-color: #FAF7F2;">
+<body class="e-canvas" style="margin: 0; padding: 0; background-color: #FFECE5; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="e-canvas" style="background-color: #FFECE5;">
     <tr>
       <td align="center" class="content-outer" style="padding-top: 20px; padding-bottom: 20px; padding-left: 16px; padding-right: 16px; max-width: 600px;">
         <table role="presentation" class="content-inner" cellpadding="0" cellspacing="0" border="0" style="font-family: Instrument Sans, sans-serif; width: 100%; max-width: 600px; margin: 0 auto;">
