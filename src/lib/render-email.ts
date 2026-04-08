@@ -72,7 +72,9 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
       const bgStyle = d.backgroundImage
         ? `background-image: url('${absolutize(d.backgroundImage, baseUrl)}'); background-size: cover; background-position: center;`
         : '';
-      const headerStyle = buildInlineStyle({ ...block.style, paddingLeft: undefined, paddingRight: undefined });
+      // Force header transparent by stripping backgroundColor regardless of
+      // what's saved in block.style (existing newsletters, saved defaults).
+      const headerStyle = buildInlineStyle({ ...block.style, backgroundColor: undefined, paddingLeft: undefined, paddingRight: undefined });
 
       return `<tr>
   <td class="e-header" style="${headerStyle}; ${bgStyle}">
