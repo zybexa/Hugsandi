@@ -240,7 +240,7 @@ function renderBlock(block: Block, baseUrl?: string): string {
 
 export function renderEmailHtml(design: Design, baseUrl?: string): string {
   const { blocks } = design;
-  const spacerRow = `<tr><td class="force-light-bg" style="padding-top: 16px; line-height: 0; font-size: 0; background-color: #FFECE5;">&nbsp;</td></tr>`;
+  const spacerRow = `<tr><td style="padding-top: 16px; line-height: 0; font-size: 0; background-color: #FFECE5;">&nbsp;</td></tr>`;
   const blocksHtml = blocks.map((b) => renderBlock(b, baseUrl)).join(`\n${spacerRow}\n`);
 
   return `<!DOCTYPE html>
@@ -249,21 +249,12 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="color-scheme" content="light dark">
-  <meta name="supported-color-schemes" content="light dark">
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
   <title>${escapeHtml(design.name || 'Newsletter')}</title>
   <!--[if mso]>
   <style>table,td{font-family:Arial,sans-serif;}</style>
   <![endif]-->
   <style>
-    :root { color-scheme: light dark; supported-color-schemes: light dark; }
-    /* Re-assert brand background in clients that auto-invert (Gmail Android/iOS, Apple Mail dark) */
-    [data-ogsc] .force-light-bg, [data-ogsb] .force-light-bg { background-color: #FFECE5 !important; }
-    @media (prefers-color-scheme: dark) {
-      .force-light-bg { background-color: #FFECE5 !important; }
-      body, body table { background-color: #FFECE5 !important; }
-    }
     .content-outer { max-width: 600px !important; }
     .content-inner { max-width: 600px !important; }
     @media only screen and (min-width: 960px) {
@@ -281,10 +272,10 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
     }
   </style>
 </head>
-<body class="force-light-bg" style="margin: 0; padding: 0; background-color: #FFECE5; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="force-light-bg" style="background-color: #FFECE5;">
+<body style="margin: 0; padding: 0; background-color: #FFECE5; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #FFECE5;">
     <tr>
-      <td align="center" class="content-outer force-light-bg" style="padding-top: 20px; padding-bottom: 20px; padding-left: 16px; padding-right: 16px; max-width: 600px; background-color: #FFECE5;">
+      <td align="center" class="content-outer" style="padding-top: 20px; padding-bottom: 20px; padding-left: 16px; padding-right: 16px; max-width: 600px;">
         <table role="presentation" class="content-inner" cellpadding="0" cellspacing="0" border="0" style="font-family: Instrument Sans, sans-serif; width: 100%; max-width: 600px; margin: 0 auto;">
 ${blocksHtml}
         </table>
