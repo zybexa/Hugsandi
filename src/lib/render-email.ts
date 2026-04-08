@@ -263,7 +263,6 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
        this and applies its own auto-transformation regardless. */
     @media (prefers-color-scheme: dark) {
       .e-canvas { background-color: #1A1510 !important; }
-      .e-header { background-color: #3A2A22 !important; }
       .e-card { background-color: #2A221B !important; }
       .e-card-title { color: #F5EDE5 !important; }
       .e-card-body { color: #D4C8BC !important; }

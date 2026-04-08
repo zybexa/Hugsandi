@@ -90,7 +90,7 @@ export function createDefaultBlock(type: BlockType, defaults?: SavedDefaults): B
         : headerDefaults;
       const headerStyle = saved?.style
         ? { ...style, ...saved.style, paddingLeft: '0px', paddingRight: '0px' }
-        : { ...style, backgroundColor: '#ffece5', paddingLeft: '0px', paddingRight: '0px' };
+        : { ...style, paddingLeft: '0px', paddingRight: '0px' };
       return { id, data: headerData, style: headerStyle };
     }
     case 'content-card': {
