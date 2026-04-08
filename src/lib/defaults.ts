@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid';
 import { Block, BlockStyle, BlockType, ContentCardBlockData, GlobalStyle } from '@/types/design';
 
 export const DEFAULT_GLOBAL_STYLE: GlobalStyle = {
-  backgroundColor: '#FFCBA8',
+  backgroundColor: '#ffece5',
   contentBackgroundColor: '#ffffff',
   maxWidth: '600px',
   fontFamily: 'Arial, Helvetica, sans-serif',
@@ -90,7 +90,7 @@ export function createDefaultBlock(type: BlockType, defaults?: SavedDefaults): B
         : headerDefaults;
       const headerStyle = saved?.style
         ? { ...style, ...saved.style, paddingLeft: '0px', paddingRight: '0px' }
-        : { ...style, backgroundColor: '#FFCBA8', paddingLeft: '0px', paddingRight: '0px' };
+        : { ...style, backgroundColor: '#ffece5', paddingLeft: '0px', paddingRight: '0px' };
       return { id, data: headerData, style: headerStyle };
     }
     case 'content-card': {

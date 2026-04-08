@@ -1,28 +1,8 @@
 import { Design, Block, BlockStyle } from '@/types/design';
 
-// Gmail Android dark mode aggressively inverts CSS background-color but does
-// not touch background-image. Use the long-form `background-image` property
-// (NOT the `background:` shorthand) so the image becomes a LAYER drawn on top
-// of background-color rather than competing with it. Even if Gmail rewrites
-// background-color to dark, the opaque gradient image covers it. Older clients
-// that don't support linear-gradient ignore the invalid background-image and
-// fall back to the literal background-color.
-//
-// Optional second arg: end color for a real two-stop gradient. Recent Gmail
-// versions may collapse single-stop gradients (both stops identical) back to a
-// solid color and then invert it; passing two distinct colors guarantees the
-// parser treats it as an image.
-function bgFix(color: string, gradientEnd?: string): string {
-  const end = gradientEnd || color;
-  return `background-color: ${color}; background-image: linear-gradient(${color}, ${end});`;
-}
-
 function buildInlineStyle(style: BlockStyle): string {
   const parts: string[] = [];
-  if (style.backgroundColor) {
-    parts.push(`background-color: ${style.backgroundColor}`);
-    parts.push(`background-image: linear-gradient(${style.backgroundColor}, ${style.backgroundColor})`);
-  }
+  if (style.backgroundColor) parts.push(`background-color: ${style.backgroundColor}`);
   if (style.color) parts.push(`color: ${style.color}`);
   if (style.fontFamily) parts.push(`font-family: ${style.fontFamily}`);
   if (style.fontSize) parts.push(`font-size: ${style.fontSize}`);
@@ -146,12 +126,12 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
 
       const contentBg = '#ffffff';
       return `${d.imageSrc?.trim() ? `<tr>
-  <td style="padding: 0; line-height: 0; ${bgFix(contentBg)} border-radius: 24px 24px 0 0;">
+  <td style="padding: 0; line-height: 0; background-color: ${contentBg}; border-radius: 24px 24px 0 0;">
     <img src="${absolutize(d.imageSrc, baseUrl)}" alt="${escapeHtml(d.imageAlt)}" width="100%" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0; border-radius: 24px 24px 0 0;" />
   </td>
 </tr>` : ''}
 <tr>
-  <td style="${bgFix(contentBg)} padding: 40px 32px 30px 32px;">
+  <td style="background-color: ${contentBg}; padding: 40px 32px 30px 32px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr>
         <td style="padding-bottom: 24px;">
@@ -167,11 +147,10 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
   </td>
 </tr>
 ${d.ctaText ? (() => {
-      const ctaBg = d.ctaBackgroundColor || '#c084fc';
       const ctaHref = d.ctaUrl?.trim() ? ensureAbsoluteUrl(d.ctaUrl) : '';
       const innerHtml = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td style="${bgFix(ctaBg)} border-radius: 0 0 24px 24px; padding: 24px 32px;">
+          <td style="background-color: ${d.ctaBackgroundColor || '#c084fc'}; border-radius: 0 0 24px 24px; padding: 24px 32px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
                 <td style="color: #1f0318; font-size: ${ctaSize}; font-weight: ${ctaWeight}; font-family: ${ctaFont}; line-height: 1.1; letter-spacing: 0.01em;">
@@ -186,7 +165,7 @@ ${d.ctaText ? (() => {
         </tr>
       </table>`;
       return `<tr>
-  <td style="padding: 0; ${bgFix(ctaBg)} border-radius: 0 0 24px 24px;">
+  <td style="padding: 0; background-color: ${d.ctaBackgroundColor || '#c084fc'}; border-radius: 0 0 24px 24px;">
     ${ctaHref ? `<a href="${ctaHref}" style="display: block; text-decoration: none;">${innerHtml}</a>` : innerHtml}
   </td>
 </tr>`;
@@ -201,7 +180,7 @@ ${d.ctaText ? (() => {
       const bgColor = '#1F0318';
 
       return `<tr>
-  <td style="${bgFix(bgColor)} ${bgStyle} padding: 32px 40px; border-radius: 12px;">
+  <td style="background-color: ${bgColor}; ${bgStyle} padding: 32px 40px; border-radius: 12px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       ${true ? `<tr>
         <td style="padding-bottom: 24px;">
@@ -261,7 +240,7 @@ function renderBlock(block: Block, baseUrl?: string): string {
 
 export function renderEmailHtml(design: Design, baseUrl?: string): string {
   const { blocks } = design;
-  const spacerRow = `<tr><td style="padding-top: 16px; line-height: 0; font-size: 0; ${bgFix('#FFCBA8')}">&nbsp;</td></tr>`;
+  const spacerRow = `<tr><td style="padding-top: 16px; line-height: 0; font-size: 0; background-color: #FFECE5;">&nbsp;</td></tr>`;
   const blocksHtml = blocks.map((b) => renderBlock(b, baseUrl)).join(`\n${spacerRow}\n`);
 
   return `<!DOCTYPE html>
@@ -270,8 +249,6 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="color-scheme" content="light only">
-  <meta name="supported-color-schemes" content="light only">
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
   <title>${escapeHtml(design.name || 'Newsletter')}</title>
   <!--[if mso]>
@@ -295,8 +272,8 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
     }
   </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #FFCBA8; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #FFCBA8;">
+<body style="margin: 0; padding: 0; background-color: #FFECE5; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #FFECE5;">
     <tr>
       <td align="center" class="content-outer" style="padding-top: 20px; padding-bottom: 20px; padding-left: 16px; padding-right: 16px; max-width: 600px;">
         <table role="presentation" class="content-inner" cellpadding="0" cellspacing="0" border="0" style="font-family: Instrument Sans, sans-serif; width: 100%; max-width: 600px; margin: 0 auto;">
