@@ -28,7 +28,11 @@ export default function LivePreview({ design }: LivePreviewProps) {
 
       // Strip Google Fonts <link> to avoid sandbox script-execution warnings
       // (the font is needed in sent emails but not in the sandboxed preview)
-      const previewHtml = html.replace(/<link[^>]*fonts\.googleapis\.com[^>]*>/gi, '');
+      // Also neutralize the dark-mode @media query so the preview always shows
+      // the light design regardless of the editor user's OS color scheme.
+      const previewHtml = html
+        .replace(/<link[^>]*fonts\.googleapis\.com[^>]*>/gi, '')
+        .replace(/@media \(prefers-color-scheme: dark\)/g, '@media not all');
       iframe.srcdoc = previewHtml;
       initializedRef.current = true;
 
@@ -68,8 +72,11 @@ export default function LivePreview({ design }: LivePreviewProps) {
       }),
     };
     const html = renderEmailHtml(previewDesign);
-    // Inject <base target="_blank"> so links open in new tabs
-    const htmlWithBase = html.replace('<head>', '<head><base target="_blank">');
+    // Inject <base target="_blank"> so links open in new tabs, and neutralize
+    // the dark-mode @media query so the preview always shows the light design.
+    const htmlWithBase = html
+      .replace('<head>', '<head><base target="_blank">')
+      .replace(/@media \(prefers-color-scheme: dark\)/g, '@media not all');
     const win = window.open('', '_blank');
     if (win) {
       win.document.open();
