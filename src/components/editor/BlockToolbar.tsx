@@ -22,30 +22,19 @@ export default function BlockToolbar({ onAddBlock, onSave, saving, readOnly, onE
         <button onClick={() => onAddBlock('content-card')} className={cardBtnClass}>{t('toolbar.contentCard')}</button>
       </div>
       <div className="flex items-center gap-2">
-        {readOnly ? (
-          <button
-            onClick={onExit}
-            className="px-4 py-1.5 bg-skin-tertiary hover:opacity-80 text-skin-text-primary text-sm rounded border border-skin-border transition-colors"
-          >
-            {t('toolbar.exit')}
-          </button>
-        ) : (
-          <>
-            <button
-              onClick={onExit}
-              className="px-4 py-1.5 bg-skin-tertiary hover:opacity-80 text-skin-text-secondary text-sm rounded border border-skin-border transition-colors"
-            >
-              {t('toolbar.exit')}
-            </button>
-            <button
-              onClick={() => onSave()}
-              disabled={saving}
-              className="px-4 py-1.5 bg-skin-accent hover:bg-skin-accent-hover text-white text-sm font-semibold rounded-md shadow-skin transition-all disabled:opacity-50"
-            >
-              {saving ? t('toolbar.saving') : t('common.save')}
-            </button>
-          </>
-        )}
+        <button
+          onClick={onExit}
+          className="px-4 py-1.5 bg-skin-tertiary hover:opacity-80 text-skin-text-secondary text-sm rounded border border-skin-border transition-colors"
+        >
+          {t('toolbar.exit')}
+        </button>
+        <button
+          onClick={() => onSave()}
+          disabled={saving}
+          className="px-4 py-1.5 bg-skin-accent hover:bg-skin-accent-hover text-white text-sm font-semibold rounded-md shadow-skin transition-all disabled:opacity-50"
+        >
+          {saving ? t('toolbar.saving') : t('common.save')}
+        </button>
       </div>
     </div>
   );

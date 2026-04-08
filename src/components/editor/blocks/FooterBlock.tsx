@@ -10,9 +10,10 @@ interface FooterBlockProps {
   onChange: (data: FooterBlockData) => void;
   blockStyle?: BlockStyle;
   onStyleChange?: (style: BlockStyle) => void;
+  readOnly?: boolean;
 }
 
-export default function FooterBlock({ data, onChange }: FooterBlockProps) {
+export default function FooterBlock({ data, onChange, readOnly }: FooterBlockProps) {
   const { t } = useTranslation();
   const [savedDefault, setSavedDefault] = useState(false);
 
@@ -36,7 +37,8 @@ export default function FooterBlock({ data, onChange }: FooterBlockProps) {
           placeholder={t('footer.contactEmailPlaceholder')}
           spellCheck={false}
           autoComplete="off"
-          className="w-full mt-1 px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+          disabled={readOnly}
+          className="w-full mt-1 px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -65,14 +67,16 @@ export default function FooterBlock({ data, onChange }: FooterBlockProps) {
             value={data.websiteLabel}
             onChange={(e) => onChange({ ...data, websiteLabel: e.target.value })}
             placeholder={t('footer.websiteLabelPlaceholder')}
-            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+            disabled={readOnly}
+            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
           />
           <input
             type="text"
             value={data.websiteUrl}
             onChange={(e) => onChange({ ...data, websiteUrl: e.target.value })}
             placeholder={t('footer.websiteUrlPlaceholder')}
-            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+            disabled={readOnly}
+            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
           />
         </div>
       </div>
@@ -85,19 +89,22 @@ export default function FooterBlock({ data, onChange }: FooterBlockProps) {
             value={data.unsubscribeLabel}
             onChange={(e) => onChange({ ...data, unsubscribeLabel: e.target.value })}
             placeholder={t('footer.unsubscribeTextPlaceholder')}
-            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+            disabled={readOnly}
+            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
           />
           <input
             type="text"
             value={data.unsubscribeUrl}
             onChange={(e) => onChange({ ...data, unsubscribeUrl: e.target.value })}
             placeholder={t('footer.unsubscribeUrlPlaceholder')}
-            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+            disabled={readOnly}
+            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
           />
         </div>
       </div>
 
       {/* Save as default */}
+      {!readOnly && (
       <div className="flex">
         <button
           type="button"
@@ -118,6 +125,7 @@ export default function FooterBlock({ data, onChange }: FooterBlockProps) {
           {savedDefault ? t('common.saved') : t('common.saveAsDefault')}
         </button>
       </div>
+      )}
     </div>
   );
 }

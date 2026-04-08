@@ -340,7 +340,6 @@ function EditorContent() {
             images={images}
             onImagesChange={setImages}
             onEnsureSaved={handleEnsureSaved}
-            readOnly={isSent}
             selectedImageUrl={
               selectedBlock?.data.type === 'content-card' && selectedBlock.data.imageSrc?.trim()
                 ? selectedBlock.data.imageSrc

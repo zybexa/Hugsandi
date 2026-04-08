@@ -123,7 +123,7 @@ const SortableBlock = memo(function SortableBlock({ block, blockId, isSelected, 
         </div>
       </div>
       {!collapsed && (
-        <div className={`p-3 ${readOnly ? 'pointer-events-none opacity-60' : ''}`}>
+        <div className="p-3">
           <BlockRenderer block={block} onDataChange={handleDataChange} onStyleChange={handleStyleChange} readOnly={readOnly} availableImages={availableImages} defaultShowStyling={defaultShowStyling} />
         </div>
       )}

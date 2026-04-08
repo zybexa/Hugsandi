@@ -9,9 +9,10 @@ interface HeaderBlockProps {
   data: HeaderBlockData;
   onChange: (data: HeaderBlockData) => void;
   blockStyle?: BlockStyle;
+  readOnly?: boolean;
 }
 
-export default function HeaderBlock({ data, onChange, blockStyle }: HeaderBlockProps) {
+export default function HeaderBlock({ data, onChange, blockStyle, readOnly }: HeaderBlockProps) {
   const { t } = useTranslation();
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [savedDefault, setSavedDefault] = useState(false);
@@ -84,7 +85,8 @@ export default function HeaderBlock({ data, onChange, blockStyle }: HeaderBlockP
           value={data.logoUrl}
           onChange={(e) => onChange({ ...data, logoUrl: e.target.value })}
           placeholder={t('header.logoUrlPlaceholder')}
-          className="w-full mt-2 px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+          disabled={readOnly}
+          className="w-full mt-2 px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
         />
         </>}
       </div>
@@ -97,7 +99,8 @@ export default function HeaderBlock({ data, onChange, blockStyle }: HeaderBlockP
           value={data.viewInBrowserText}
           onChange={(e) => onChange({ ...data, viewInBrowserText: e.target.value })}
           placeholder={t('header.viewInBrowserPlaceholder')}
-          className="w-full mt-1 px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+          disabled={readOnly}
+          className="w-full mt-1 px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -109,11 +112,13 @@ export default function HeaderBlock({ data, onChange, blockStyle }: HeaderBlockP
           value={data.headline}
           onChange={(e) => onChange({ ...data, headline: e.target.value })}
           placeholder={t('header.headlinePlaceholder')}
-          className="w-full mt-1 px-3 py-2 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+          disabled={readOnly}
+          className="w-full mt-1 px-3 py-2 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
         />
       </div>
 
       {/* Save as default */}
+      {!readOnly && (
       <div className="flex">
         <button
           type="button"
@@ -129,6 +134,7 @@ export default function HeaderBlock({ data, onChange, blockStyle }: HeaderBlockP
           {savedDefault ? t('common.saved') : t('common.saveAsDefault')}
         </button>
       </div>
+      )}
     </div>
   );
 }

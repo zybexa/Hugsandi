@@ -55,7 +55,8 @@ export default function ContentCardBlock({ data, onChange, readOnly }: ContentCa
           value={data.title}
           onChange={(e) => onChange({ ...data, title: e.target.value })}
           placeholder={t('card.titlePlaceholder')}
-          className="w-full mt-1 px-3 py-2 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+          disabled={readOnly}
+          className="w-full mt-1 px-3 py-2 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -67,7 +68,8 @@ export default function ContentCardBlock({ data, onChange, readOnly }: ContentCa
           onChange={(e) => onChange({ ...data, body: e.target.value })}
           placeholder={t('card.bodyPlaceholder')}
           rows={4}
-          className="w-full mt-1 px-3 py-2 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm resize-y placeholder-skin-text-muted"
+          disabled={readOnly}
+          className="w-full mt-1 px-3 py-2 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm resize-y placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -80,14 +82,16 @@ export default function ContentCardBlock({ data, onChange, readOnly }: ContentCa
             value={data.ctaText}
             onChange={(e) => onChange({ ...data, ctaText: e.target.value })}
             placeholder={t('card.ctaTextPlaceholder')}
-            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+            disabled={readOnly}
+            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
           />
           <input
             type="text"
             value={data.ctaUrl}
             onChange={(e) => onChange({ ...data, ctaUrl: e.target.value })}
             placeholder={t('card.ctaUrlPlaceholder')}
-            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted"
+            disabled={readOnly}
+            className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
           />
         </div>
         <div className="flex items-center gap-1 mt-2">
@@ -96,9 +100,10 @@ export default function ContentCardBlock({ data, onChange, readOnly }: ContentCa
               key={color}
               type="button"
               onClick={() => onChange({ ...data, ctaBackgroundColor: color })}
+              disabled={readOnly}
               aria-label={`${t('card.ctaColor')} ${color}`}
               aria-pressed={data.ctaBackgroundColor === color}
-              className={`w-7 h-7 rounded-full border-2 transition-colors ${data.ctaBackgroundColor === color ? 'border-blue-500 scale-110' : 'border-skin-border'}`}
+              className={`w-7 h-7 rounded-full border-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${data.ctaBackgroundColor === color ? 'border-blue-500 scale-110' : 'border-skin-border'}`}
               style={{ backgroundColor: color }}
             />
           ))}
