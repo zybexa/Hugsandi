@@ -168,8 +168,8 @@ ${d.ctaText ? (() => {
                 <td style="color: #1f0318; font-size: ${ctaSize}; font-weight: ${ctaWeight}; font-family: ${ctaFont}; line-height: 1.1; letter-spacing: 0.01em;">
                   ${escapeHtml(d.ctaText)}
                 </td>
-                <td align="right" style="color: #1f0318; font-size: 32px; line-height: 1; vertical-align: middle;">
-                  &#x1F806;
+                <td align="right" style="color: #1f0318; font-size: 32px; line-height: 1; vertical-align: middle; font-family: Arial, sans-serif;">
+                  &#x279C;
                 </td>
               </tr>
             </table>
