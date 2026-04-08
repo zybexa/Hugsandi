@@ -261,7 +261,7 @@ function renderBlock(block: Block, baseUrl?: string): string {
 
 export function renderEmailHtml(design: Design, baseUrl?: string): string {
   const { blocks } = design;
-  const spacerRow = `<tr><td style="padding-top: 16px; line-height: 0; font-size: 0; ${bgFix('#FFECE5')}">&nbsp;</td></tr>`;
+  const spacerRow = `<tr><td style="padding-top: 16px; line-height: 0; font-size: 0; ${bgFix('#FFCBA8')}">&nbsp;</td></tr>`;
   const blocksHtml = blocks.map((b) => renderBlock(b, baseUrl)).join(`\n${spacerRow}\n`);
 
   return `<!DOCTYPE html>
@@ -278,13 +278,6 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
   <style>table,td{font-family:Arial,sans-serif;}</style>
   <![endif]-->
   <style>
-    /* Body gradient lives in <style> instead of inline so Gmail mobile
-       does not strip background-image from inline styles. The two-stop
-       gradient also defeats parsers that collapse single-stop gradients. */
-    .body-bg {
-      background-color: #FFECE5 !important;
-      background-image: linear-gradient(#FFECE5, #F5DCD0) !important;
-    }
     .content-outer { max-width: 600px !important; }
     .content-inner { max-width: 600px !important; }
     @media only screen and (min-width: 960px) {
@@ -302,8 +295,8 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
     }
   </style>
 </head>
-<body class="body-bg" style="margin: 0; padding: 0; background-color: #FFECE5; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="body-bg" style="background-color: #FFECE5;">
+<body style="margin: 0; padding: 0; background-color: #FFCBA8; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #FFCBA8;">
     <tr>
       <td align="center" class="content-outer" style="padding-top: 20px; padding-bottom: 20px; padding-left: 16px; padding-right: 16px; max-width: 600px;">
         <table role="presentation" class="content-inner" cellpadding="0" cellspacing="0" border="0" style="font-family: Instrument Sans, sans-serif; width: 100%; max-width: 600px; margin: 0 auto;">

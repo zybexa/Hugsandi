@@ -31,7 +31,7 @@ export default function SubscribeTestPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#ffece5', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFCBA8', fontFamily: 'Arial, sans-serif' }}>
       <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '12px', maxWidth: '400px', width: '100%' }}>
         <h1 style={{ margin: '0 0 8px', fontSize: '24px', color: '#1f0318' }}>Subscribe Test</h1>
         <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#666' }}>This page simulates the subscribe form on hugsandi.is</p>
