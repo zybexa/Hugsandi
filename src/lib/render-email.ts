@@ -144,7 +144,10 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
       const ctaSize = '20px';
       const ctaWeight = '500';
 
-      const contentBg = '#ffffff';
+      // Warm cream instead of pure white. Gmail Android dark mode inverts
+      // light neutral backgrounds but preserves saturated/tinted colors, so
+      // this tinted bg should survive dark mode without any CSS hacks.
+      const contentBg = '#ECD4BC';
       return `${d.imageSrc?.trim() ? `<tr>
   <td style="padding: 0; line-height: 0; ${bgFix(contentBg)} border-radius: 24px 24px 0 0;">
     <img src="${absolutize(d.imageSrc, baseUrl)}" alt="${escapeHtml(d.imageAlt)}" width="100%" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0; border-radius: 24px 24px 0 0;" />
