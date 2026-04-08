@@ -225,12 +225,27 @@ export default function DashboardPage() {
                           <td className="px-3 py-2.5">
                             <div className="flex items-center gap-2">
                               {isSent ? (
-                                <button
-                                  onClick={() => router.push(`/editor?id=${nl.id}`)}
-                                  className="px-3 py-1 text-xs font-medium rounded-md border border-skin-border-ui bg-skin-tertiary hover:bg-skin-elevated text-skin-text-secondary transition-colors"
-                                >
-                                  {t('dash.view')}
-                                </button>
+                                <>
+                                  <button
+                                    onClick={() => router.push(`/editor?id=${nl.id}`)}
+                                    className="px-3 py-1 text-xs font-medium rounded-md border border-skin-border-ui bg-skin-tertiary hover:bg-skin-elevated text-skin-text-secondary transition-colors"
+                                  >
+                                    {t('dash.view')}
+                                  </button>
+                                  <button
+                                    disabled
+                                    title={t('error.alreadySent')}
+                                    className="px-3 py-1 text-xs font-medium rounded-md border border-skin-text-muted bg-skin-tertiary text-skin-text-secondary opacity-40 cursor-not-allowed"
+                                  >
+                                    {t('common.edit')}
+                                  </button>
+                                  <button
+                                    onClick={() => setDeleteNewsletter(nl)}
+                                    className="px-2 py-1 text-xs rounded-md text-skin-danger hover:bg-skin-danger-bg border border-skin-danger hover:border-skin-danger-border transition-colors"
+                                  >
+                                    {t('common.delete')}
+                                  </button>
+                                </>
                               ) : (
                                 <>
                                   <button
