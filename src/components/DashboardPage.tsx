@@ -102,7 +102,8 @@ export default function DashboardPage() {
       } else if (result.sent > 0) {
         setSendResult({ type: 'success', message: t('dash.sendTo', { count: result.sent }) });
       } else {
-        setSendResult({ type: 'error', message: t('error.noEmailsSent') });
+        const detail = Array.isArray(result.errors) && result.errors.length > 0 ? result.errors[0] : null;
+        setSendResult({ type: 'error', message: detail || t('error.noEmailsSent') });
       }
     } catch {
       setSendResult({ type: 'error', message: t('error.generic') });
