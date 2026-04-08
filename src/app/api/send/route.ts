@@ -133,15 +133,32 @@ export async function POST(request: Request) {
 
     for (const settled of results) {
       if (settled.status === 'fulfilled') {
-        recipientRecords.push({
-          send_id: sendId,
-          email: settled.value.email,
-          resend_email_id: settled.value.result.data?.id || null,
-          status: 'sent',
-        });
-        sentCount++;
+        const { email, result } = settled.value;
+        // Resend SDK returns { data, error } — a fulfilled promise can still contain an API error
+        if (result.error) {
+          console.error(`Resend API error for ${email}:`, result.error);
+          recipientRecords.push({
+            send_id: sendId,
+            email,
+            resend_email_id: null,
+            status: 'failed',
+          });
+          const errMsg = typeof result.error === 'object' && 'message' in result.error
+            ? (result.error as { message: string }).message
+            : JSON.stringify(result.error);
+          errors.push(`Failed to send to ${email}: ${errMsg}`);
+        } else {
+          recipientRecords.push({
+            send_id: sendId,
+            email,
+            resend_email_id: result.data?.id || null,
+            status: 'sent',
+          });
+          sentCount++;
+        }
       } else {
         const email = batch[results.indexOf(settled)]?.email || 'unknown';
+        console.error(`Resend network/exception for ${email}:`, settled.reason);
         recipientRecords.push({
           send_id: sendId,
           email,
