@@ -86,7 +86,8 @@ export async function POST(request: Request) {
   const headersList = headers();
   const host = headersList.get('host') || 'localhost:3000';
   const protocol = headersList.get('x-forwarded-proto') || 'http';
-  const viewUrl = `${protocol}://${host}/view/${designId}`;
+  const baseUrl = `${protocol}://${host}`;
+  const viewUrl = `${baseUrl}/view/${designId}`;
 
   const designWithViewUrl: Design = {
     ...design,
@@ -101,8 +102,8 @@ export async function POST(request: Request) {
     }),
   };
 
-  // 8. Render email HTML
-  const html = renderEmailHtml(designWithViewUrl);
+  // 8. Render email HTML (baseUrl resolves any relative image paths)
+  const html = renderEmailHtml(designWithViewUrl, baseUrl);
   const resend = getResend();
   const from = process.env.EMAIL_FROM || 'onboarding@resend.dev';
 

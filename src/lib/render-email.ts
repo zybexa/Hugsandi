@@ -33,6 +33,18 @@ function ensureAbsoluteUrl(url: string): string {
   return `https://${url}`;
 }
 
+// Resolve image/asset paths against an optional base URL so emails (which have
+// no document base) can load relative-pathed assets like /logo2.png. When no
+// baseUrl is provided (e.g. browser preview), the original value is returned.
+function absolutize(url: string, baseUrl?: string): string {
+  if (!url) return '';
+  if (/^(https?:|data:|mailto:|tel:)/i.test(url)) return url;
+  if (!baseUrl) return url;
+  const base = baseUrl.replace(/\/$/, '');
+  const path = url.startsWith('/') ? url : `/${url}`;
+  return `${base}${path}`;
+}
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -53,12 +65,12 @@ ${html}
 </tr>`;
 }
 
-function renderBlockInner(block: Block): string {
+function renderBlockInner(block: Block, baseUrl?: string): string {
   switch (block.data.type) {
     case 'header': {
       const d = block.data;
       const bgStyle = d.backgroundImage
-        ? `background-image: url('${d.backgroundImage}'); background-size: cover; background-position: center;`
+        ? `background-image: url('${absolutize(d.backgroundImage, baseUrl)}'); background-size: cover; background-position: center;`
         : '';
       const headerStyle = buildInlineStyle({ ...block.style, paddingLeft: undefined, paddingRight: undefined });
 
@@ -67,7 +79,7 @@ function renderBlockInner(block: Block): string {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr>
         <td style="vertical-align: middle;">
-          ${d.logoSrc ? `${d.logoUrl ? `<a href="${ensureAbsoluteUrl(d.logoUrl)}" style="text-decoration: none;">` : ''}<img src="${d.logoSrc}" alt="${escapeHtml(d.logoAlt)}" width="128" style="display: block; height: auto; border: 0;" />${d.logoUrl ? '</a>' : ''}` : ''}
+          ${d.logoSrc ? `${d.logoUrl ? `<a href="${ensureAbsoluteUrl(d.logoUrl)}" style="text-decoration: none;">` : ''}<img src="${absolutize(d.logoSrc, baseUrl)}" alt="${escapeHtml(d.logoAlt)}" width="128" style="display: block; height: auto; border: 0;" />${d.logoUrl ? '</a>' : ''}` : ''}
         </td>
         <td align="right" style="vertical-align: middle;">
           ${d.viewInBrowserText ? (() => {
@@ -115,7 +127,7 @@ function renderBlockInner(block: Block): string {
       const contentBg = '#ffffff';
       return `${d.imageSrc?.trim() ? `<tr>
   <td style="padding: 0; line-height: 0; background-color: ${contentBg}; border-radius: 24px 24px 0 0;">
-    <img src="${d.imageSrc}" alt="${escapeHtml(d.imageAlt)}" width="100%" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0; border-radius: 24px 24px 0 0;" />
+    <img src="${absolutize(d.imageSrc, baseUrl)}" alt="${escapeHtml(d.imageAlt)}" width="100%" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0; border-radius: 24px 24px 0 0;" />
   </td>
 </tr>` : ''}
 <tr>
@@ -163,7 +175,7 @@ ${d.ctaText ? (() => {
     case 'footer': {
       const d = block.data;
       const bgStyle = d.backgroundImage
-        ? `background-image: url('${d.backgroundImage}'); background-size: cover; background-position: center;`
+        ? `background-image: url('${absolutize(d.backgroundImage, baseUrl)}'); background-size: cover; background-position: center;`
         : '';
       const bgColor = '#1F0318';
 
@@ -175,7 +187,7 @@ ${d.ctaText ? (() => {
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
             <tr>
               <td style="vertical-align: middle; width: 1px;">
-                <img src="${d.logoSrc || '/logo2.png'}" alt="Logo" width="56" height="56" style="display: block; width: 56px; height: 56px; border: 0;" />
+                <img src="${absolutize(d.logoSrc || '/logo2.png', baseUrl)}" alt="Logo" width="56" height="56" style="display: block; width: 56px; height: 56px; border: 0;" />
               </td>
               ${d.contactEmail ? `<td align="right" style="vertical-align: middle;">
                 <a href="mailto:${d.contactEmail}" style="color: #FFEDE6; font-family: Instrument Sans, sans-serif; font-weight: 400; font-size: 20px; line-height: 1.3; letter-spacing: 0.02em; text-decoration: none;">${escapeHtml(d.contactEmail)}</a>
@@ -186,7 +198,7 @@ ${d.ctaText ? (() => {
       </tr>` : ''}
       ${true ? `<tr class="footer-mobile-center">
         <td align="center">
-          <img src="${d.orgLogoSrc || '/slogan.png'}" alt="Slogan" width="100%" style="display: block; width: 100%; height: auto; border: 0;" />
+          <img src="${absolutize(d.orgLogoSrc || '/slogan.png', baseUrl)}" alt="Slogan" width="100%" style="display: block; width: 100%; height: auto; border: 0;" />
         </td>
       </tr>` : ''}
       ${d.churchLogoSrc || d.websiteUrl || d.unsubscribeLabel || d.unsubscribeUrl ? `<tr>
@@ -194,7 +206,7 @@ ${d.ctaText ? (() => {
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="footer-stack">
             <tr>
               <td class="footer-col" style="vertical-align: middle;">
-                <img src="${d.churchLogoSrc || '/kirkjan.png'}" alt="" width="183" style="display: block; width: 183px; height: auto; border: 0;" />
+                <img src="${absolutize(d.churchLogoSrc || '/kirkjan.png', baseUrl)}" alt="" width="183" style="display: block; width: 183px; height: auto; border: 0;" />
               </td>
               ${d.websiteUrl || d.unsubscribeLabel || d.unsubscribeUrl ? `<td class="footer-col footer-col-links" align="right" style="vertical-align: middle;">
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
@@ -222,14 +234,14 @@ ${d.ctaText ? (() => {
   }
 }
 
-function renderBlock(block: Block): string {
-  return wrapWithMarginCell(renderBlockInner(block), block.style);
+function renderBlock(block: Block, baseUrl?: string): string {
+  return wrapWithMarginCell(renderBlockInner(block, baseUrl), block.style);
 }
 
-export function renderEmailHtml(design: Design): string {
+export function renderEmailHtml(design: Design, baseUrl?: string): string {
   const { blocks } = design;
   const spacerRow = `<tr><td style="padding-top: 16px; line-height: 0; font-size: 0; background-color: #FFECE5;">&nbsp;</td></tr>`;
-  const blocksHtml = blocks.map((b) => renderBlock(b)).join(`\n${spacerRow}\n`);
+  const blocksHtml = blocks.map((b) => renderBlock(b, baseUrl)).join(`\n${spacerRow}\n`);
 
   return `<!DOCTYPE html>
 <html lang="en">
