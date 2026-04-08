@@ -7,6 +7,7 @@ const STATUS_ORDER: Record<string, number> = {
   sent: 1,
   delivered: 2,
   opened: 3,
+  bounced: 4, // terminal: a bounce is authoritative and overrides prior states
 };
 
 export async function POST(request: Request) {
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
   const newStatus =
     eventType === 'email.delivered' ? 'delivered'
     : eventType === 'email.opened' ? 'opened'
-    : eventType === 'email.bounced' ? 'failed'
+    : eventType === 'email.bounced' ? 'bounced'
     : 'failed';
 
   const supabase = getSupabase();
@@ -82,8 +83,9 @@ export async function POST(request: Request) {
     .update({ status: newStatus, updated_at: new Date().toISOString() })
     .eq('id', recipient.id);
 
-  // Update aggregate counts using COUNT queries (no row data fetched)
-  const [deliveredResult, openedResult] = await Promise.all([
+  // Update aggregate counts using COUNT queries (no row data fetched).
+  // delivered_count counts delivered+opened (opened implies delivered).
+  const [deliveredResult, openedResult, bouncedResult, failedResult] = await Promise.all([
     supabase
       .from('send_recipients')
       .select('*', { count: 'exact', head: true })
@@ -94,6 +96,16 @@ export async function POST(request: Request) {
       .select('*', { count: 'exact', head: true })
       .eq('send_id', recipient.send_id)
       .eq('status', 'opened'),
+    supabase
+      .from('send_recipients')
+      .select('*', { count: 'exact', head: true })
+      .eq('send_id', recipient.send_id)
+      .eq('status', 'bounced'),
+    supabase
+      .from('send_recipients')
+      .select('*', { count: 'exact', head: true })
+      .eq('send_id', recipient.send_id)
+      .eq('status', 'failed'),
   ]);
 
   await supabase
@@ -101,6 +113,8 @@ export async function POST(request: Request) {
     .update({
       delivered_count: deliveredResult.count ?? 0,
       opened_count: openedResult.count ?? 0,
+      bounced_count: bouncedResult.count ?? 0,
+      failed_count: failedResult.count ?? 0,
     })
     .eq('id', recipient.send_id);
 

@@ -51,6 +51,8 @@ const en: Record<string, string> = {
   'dash.colRecipients': 'Recipients',
   'dash.colDelivered': 'Delivered',
   'dash.colOpened': 'Opened',
+  'dash.colBounced': 'Bounced',
+  'dash.colFailed': 'Failed',
   'dash.colActions': 'Actions',
   'dash.view': 'View',
   'dash.send': 'Send',

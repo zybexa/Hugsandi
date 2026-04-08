@@ -17,6 +17,10 @@ interface Newsletter {
   deliveredPercent: number;
   openedCount: number;
   openedPercent: number;
+  bouncedCount: number;
+  bouncedPercent: number;
+  failedCount: number;
+  failedPercent: number;
 }
 
 interface DashboardData {
@@ -141,7 +145,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen text-skin-text-primary">
       {/* Main content */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="bg-skin-card border-[length:var(--border-ui-width)] border-skin-border-ui rounded-[16px] shadow-skin-card p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xs font-medium text-skin-text-secondary uppercase tracking-[0.04em]">{t('dash.title')}</h2>
@@ -177,11 +181,12 @@ export default function DashboardPage() {
                     <tr className="border-b border-skin-border-ui text-left">
                       <th className="px-3 py-2 text-xs text-skin-text-secondary uppercase tracking-[0.04em] font-medium">{t('dash.colName')}</th>
                       <th className="px-3 py-2 text-xs text-skin-text-secondary uppercase tracking-[0.04em] font-medium hidden md:table-cell">{t('dash.colCreated')}</th>
-                      <th className="px-3 py-2 text-xs text-skin-text-secondary uppercase tracking-[0.04em] font-medium hidden md:table-cell">{t('dash.colChanged')}</th>
                       <th className="px-3 py-2 text-xs text-skin-text-secondary uppercase tracking-[0.04em] font-medium">{t('dash.colSent')}</th>
                       <th className="px-3 py-2 text-xs text-skin-text-secondary uppercase tracking-[0.04em] font-medium hidden lg:table-cell">{t('dash.colRecipients')}</th>
                       <th className="px-3 py-2 text-xs text-skin-text-secondary uppercase tracking-[0.04em] font-medium hidden lg:table-cell">{t('dash.colDelivered')}</th>
                       <th className="px-3 py-2 text-xs text-skin-text-secondary uppercase tracking-[0.04em] font-medium hidden lg:table-cell">{t('dash.colOpened')}</th>
+                      <th className="px-3 py-2 text-xs text-skin-text-secondary uppercase tracking-[0.04em] font-medium hidden lg:table-cell">{t('dash.colBounced')}</th>
+                      <th className="px-3 py-2 text-xs text-skin-text-secondary uppercase tracking-[0.04em] font-medium hidden lg:table-cell">{t('dash.colFailed')}</th>
                       <th className="px-3 py-2 text-xs text-skin-text-secondary uppercase tracking-[0.04em] font-medium">{t('dash.colActions')}</th>
                     </tr>
                   </thead>
@@ -199,7 +204,6 @@ export default function DashboardPage() {
                         <tr key={nl.id} className={`${i < data.newsletters.length - 1 ? 'border-b border-skin-border-ui' : ''} transition-colors hover:bg-skin-accent-subtle`}>
                           <td className="px-3 py-2.5 text-[0.8125rem] font-medium text-skin-text-primary">{nl.name}</td>
                           <td className="px-3 py-2.5 text-[0.8125rem] text-skin-text-secondary hidden md:table-cell">{formatDate(nl.createdAt)}</td>
-                          <td className="px-3 py-2.5 text-[0.8125rem] text-skin-text-secondary hidden md:table-cell">{formatDate(nl.updatedAt)}</td>
                           <td className="px-3 py-2.5">
                             {isSent ? (
                               <span className="inline-block px-2 py-0.5 rounded text-[0.7rem] font-medium bg-skin-success-bg text-skin-success border border-skin-success-border">
@@ -221,6 +225,12 @@ export default function DashboardPage() {
                           </td>
                           <td className="px-3 py-2.5 hidden lg:table-cell text-[0.8125rem] text-skin-text-secondary tabular-nums">
                             {isSent ? `${nl.openedCount} (${nl.openedPercent}%)` : '\u2014'}
+                          </td>
+                          <td className="px-3 py-2.5 hidden lg:table-cell text-[0.8125rem] text-skin-text-secondary tabular-nums">
+                            {isSent ? `${nl.bouncedCount} (${nl.bouncedPercent}%)` : '\u2014'}
+                          </td>
+                          <td className="px-3 py-2.5 hidden lg:table-cell text-[0.8125rem] text-skin-text-secondary tabular-nums">
+                            {isSent ? `${nl.failedCount} (${nl.failedPercent}%)` : '\u2014'}
                           </td>
                           <td className="px-3 py-2.5">
                             <div className="flex items-center gap-2">

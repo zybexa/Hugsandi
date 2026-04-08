@@ -14,7 +14,7 @@ export async function GET() {
       .order('updated_at', { ascending: false }),
     supabase
       .from('newsletter_sends')
-      .select('design_id, subject, recipient_count, sent_count, failed_count, delivered_count, opened_count, sent_at')
+      .select('design_id, subject, recipient_count, sent_count, failed_count, delivered_count, opened_count, bounced_count, sent_at')
       .order('sent_at', { ascending: false }),
     supabase
       .from('subscribers')
@@ -45,6 +45,8 @@ export async function GET() {
     const recipientCount = send?.recipient_count ?? 0;
     const deliveredCount = send?.delivered_count ?? 0;
     const openedCount = send?.opened_count ?? 0;
+    const bouncedCount = send?.bounced_count ?? 0;
+    const failedCount = send?.failed_count ?? 0;
 
     return {
       id: design.id,
@@ -59,6 +61,10 @@ export async function GET() {
       deliveredPercent: recipientCount > 0 ? Math.round((deliveredCount / recipientCount) * 100) : 0,
       openedCount,
       openedPercent: recipientCount > 0 ? Math.round((openedCount / recipientCount) * 100) : 0,
+      bouncedCount,
+      bouncedPercent: recipientCount > 0 ? Math.round((bouncedCount / recipientCount) * 100) : 0,
+      failedCount,
+      failedPercent: recipientCount > 0 ? Math.round((failedCount / recipientCount) * 100) : 0,
     };
   });
 

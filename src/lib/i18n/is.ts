@@ -51,6 +51,8 @@ const is: Record<string, string> = {
   'dash.colRecipients': 'Viðtakendur',
   'dash.colDelivered': 'Afhent',
   'dash.colOpened': 'Opnað',
+  'dash.colBounced': 'Endursent',
+  'dash.colFailed': 'Mistókst',
   'dash.colActions': 'Aðgerðir',
   'dash.view': 'Skoða',
   'dash.send': 'Senda',
