@@ -126,6 +126,8 @@ const en: Record<string, string> = {
   'preview.title': 'Preview',
   'preview.openInBrowser': 'Open in browser',
   'preview.iframeTitle': 'Newsletter Preview',
+  'preview.light': 'Light',
+  'preview.dark': 'Dark',
 
   // ── Content Card Block ──────────────────────────────
   'card.styling': 'Styling',

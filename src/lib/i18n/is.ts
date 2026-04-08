@@ -126,6 +126,8 @@ const is: Record<string, string> = {
   'preview.title': 'Forskoðun',
   'preview.openInBrowser': 'Opna í vafra',
   'preview.iframeTitle': 'Forskoðun fréttabréfs',
+  'preview.light': 'Ljóst',
+  'preview.dark': 'Dökkt',
 
   // ── Content Card Block ──────────────────────────────
   'card.styling': 'Stíll',

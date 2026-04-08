@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Design } from '@/types/design';
 import { renderEmailHtml } from '@/lib/render-email';
 import { useTranslation } from '@/lib/i18n';
@@ -9,10 +9,13 @@ interface LivePreviewProps {
   design: Design;
 }
 
+type PreviewMode = 'light' | 'dark';
+
 export default function LivePreview({ design }: LivePreviewProps) {
   const { t } = useTranslation();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const initializedRef = useRef(false);
+  const [mode, setMode] = useState<PreviewMode>('light');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -27,12 +30,15 @@ export default function LivePreview({ design }: LivePreviewProps) {
         : 0;
 
       // Strip Google Fonts <link> to avoid sandbox script-execution warnings
-      // (the font is needed in sent emails but not in the sandboxed preview)
-      // Also neutralize the dark-mode @media query so the preview always shows
-      // the light design regardless of the editor user's OS color scheme.
+      // (the font is needed in sent emails but not in the sandboxed preview).
+      // Rewrite the dark-mode @media query so the preview reflects the chosen
+      // toggle state regardless of the editor user's OS color scheme:
+      //   light → @media not all  (never matches, dark rules skipped)
+      //   dark  → @media all      (always matches, dark rules applied)
+      const mediaReplacement = mode === 'dark' ? '@media all' : '@media not all';
       const previewHtml = html
         .replace(/<link[^>]*fonts\.googleapis\.com[^>]*>/gi, '')
-        .replace(/@media \(prefers-color-scheme: dark\)/g, '@media not all');
+        .replace(/@media \(prefers-color-scheme: dark\)/g, mediaReplacement);
       iframe.srcdoc = previewHtml;
       initializedRef.current = true;
 
@@ -57,7 +63,7 @@ export default function LivePreview({ design }: LivePreviewProps) {
       iframe.addEventListener('load', handleLoad);
     }, 300);
     return () => clearTimeout(timer);
-  }, [design]);
+  }, [design, mode]);
 
   function openInBrowser() {
     // Inject view URL into header blocks for preview
@@ -72,11 +78,12 @@ export default function LivePreview({ design }: LivePreviewProps) {
       }),
     };
     const html = renderEmailHtml(previewDesign);
-    // Inject <base target="_blank"> so links open in new tabs, and neutralize
-    // the dark-mode @media query so the preview always shows the light design.
+    // Inject <base target="_blank"> so links open in new tabs, and rewrite the
+    // dark-mode @media query so the popup honors the current preview toggle.
+    const mediaReplacement = mode === 'dark' ? '@media all' : '@media not all';
     const htmlWithBase = html
       .replace('<head>', '<head><base target="_blank">')
-      .replace(/@media \(prefers-color-scheme: dark\)/g, '@media not all');
+      .replace(/@media \(prefers-color-scheme: dark\)/g, mediaReplacement);
     const win = window.open('', '_blank');
     if (win) {
       win.document.open();
@@ -91,12 +98,36 @@ export default function LivePreview({ design }: LivePreviewProps) {
         <h3 className="text-xs text-skin-text-secondary uppercase tracking-wide font-semibold">
           {t('preview.title')}
         </h3>
-        <button
-          onClick={openInBrowser}
-          className="text-xs text-skin-text-muted hover:text-skin-text-primary transition-colors"
-        >
-          {t('preview.openInBrowser')}
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center rounded border border-skin-border overflow-hidden">
+            <button
+              onClick={() => setMode('light')}
+              className={`px-2 py-1 text-xs transition-colors ${
+                mode === 'light'
+                  ? 'bg-skin-accent text-white'
+                  : 'text-skin-text-muted hover:text-skin-text-primary'
+              }`}
+            >
+              {t('preview.light')}
+            </button>
+            <button
+              onClick={() => setMode('dark')}
+              className={`px-2 py-1 text-xs transition-colors ${
+                mode === 'dark'
+                  ? 'bg-skin-accent text-white'
+                  : 'text-skin-text-muted hover:text-skin-text-primary'
+              }`}
+            >
+              {t('preview.dark')}
+            </button>
+          </div>
+          <button
+            onClick={openInBrowser}
+            className="text-xs text-skin-text-muted hover:text-skin-text-primary transition-colors"
+          >
+            {t('preview.openInBrowser')}
+          </button>
+        </div>
       </div>
       <div className="flex-1 bg-gray-100 overflow-y-auto overflow-x-hidden flex justify-center">
         <iframe
