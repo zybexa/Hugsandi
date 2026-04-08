@@ -7,8 +7,14 @@ import { Design, Block, BlockStyle } from '@/types/design';
 // background-color to dark, the opaque gradient image covers it. Older clients
 // that don't support linear-gradient ignore the invalid background-image and
 // fall back to the literal background-color.
-function bgFix(color: string): string {
-  return `background-color: ${color}; background-image: linear-gradient(${color}, ${color});`;
+//
+// Optional second arg: end color for a real two-stop gradient. Recent Gmail
+// versions may collapse single-stop gradients (both stops identical) back to a
+// solid color and then invert it; passing two distinct colors guarantees the
+// parser treats it as an image.
+function bgFix(color: string, gradientEnd?: string): string {
+  const end = gradientEnd || color;
+  return `background-color: ${color}; background-image: linear-gradient(${color}, ${end});`;
 }
 
 function buildInlineStyle(style: BlockStyle): string {
@@ -289,8 +295,8 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
     }
   </style>
 </head>
-<body style="margin: 0; padding: 0; ${bgFix('#FFECE5')} -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="${bgFix('#FFECE5')}">
+<body style="margin: 0; padding: 0; ${bgFix('#FFECE5', '#F5DCD0')} -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="${bgFix('#FFECE5', '#F5DCD0')}">
     <tr>
       <td align="center" class="content-outer" style="padding-top: 20px; padding-bottom: 20px; padding-left: 16px; padding-right: 16px; max-width: 600px;">
         <table role="presentation" class="content-inner" cellpadding="0" cellspacing="0" border="0" style="font-family: Instrument Sans, sans-serif; width: 100%; max-width: 600px; margin: 0 auto;">
