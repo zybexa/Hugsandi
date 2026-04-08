@@ -75,7 +75,7 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
       const headerStyle = buildInlineStyle({ ...block.style, paddingLeft: undefined, paddingRight: undefined });
 
       return `<tr>
-  <td style="${headerStyle}; ${bgStyle}">
+  <td class="e-header" style="${headerStyle}; ${bgStyle}">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr>
         <td style="vertical-align: middle;">
@@ -126,21 +126,21 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
 
       const contentBg = '#ffffff';
       return `${d.imageSrc?.trim() ? `<tr>
-  <td style="padding: 0; line-height: 0; background-color: ${contentBg}; border-radius: 24px 24px 0 0;">
+  <td class="e-card" style="padding: 0; line-height: 0; background-color: ${contentBg}; border-radius: 24px 24px 0 0;">
     <img src="${absolutize(d.imageSrc, baseUrl)}" alt="${escapeHtml(d.imageAlt)}" width="100%" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0; border-radius: 24px 24px 0 0;" />
   </td>
 </tr>` : ''}
 <tr>
-  <td style="background-color: ${contentBg}; padding: 40px 32px 30px 32px;">
+  <td class="e-card" style="background-color: ${contentBg}; padding: 40px 32px 30px 32px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr>
         <td style="padding-bottom: 24px;">
-          <h2 style="margin: 0; font-size: ${titleSize}; font-weight: ${titleWeight}; color: #1f0318; font-family: ${titleFont}; font-style: ${titleFontStyle}; text-decoration: ${titleDecoration}; line-height: 1.1; letter-spacing: 0px;">${escapeHtml(d.title)}</h2>
+          <h2 class="e-card-title" style="margin: 0; font-size: ${titleSize}; font-weight: ${titleWeight}; color: #1f0318; font-family: ${titleFont}; font-style: ${titleFontStyle}; text-decoration: ${titleDecoration}; line-height: 1.1; letter-spacing: 0px;">${escapeHtml(d.title)}</h2>
         </td>
       </tr>
       <tr>
         <td style="padding-bottom: 0;">
-          <p style="${bodyParaStyle}">${bodyHtml}</p>
+          <p class="e-card-body" style="${bodyParaStyle}">${bodyHtml}</p>
         </td>
       </tr>
     </table>
@@ -240,7 +240,7 @@ function renderBlock(block: Block, baseUrl?: string): string {
 
 export function renderEmailHtml(design: Design, baseUrl?: string): string {
   const { blocks } = design;
-  const spacerRow = `<tr><td style="padding-top: 16px; line-height: 0; font-size: 0; background-color: #FFECE5;">&nbsp;</td></tr>`;
+  const spacerRow = `<tr><td class="e-canvas" style="padding-top: 16px; line-height: 0; font-size: 0; background-color: #FAF7F2;">&nbsp;</td></tr>`;
   const blocksHtml = blocks.map((b) => renderBlock(b, baseUrl)).join(`\n${spacerRow}\n`);
 
   return `<!DOCTYPE html>
@@ -254,7 +254,20 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
   <!--[if mso]>
   <style>table,td{font-family:Arial,sans-serif;}</style>
   <![endif]-->
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
   <style>
+    :root { color-scheme: light dark; supported-color-schemes: light dark; }
+    /* Real dark mode theme for clients that respect prefers-color-scheme
+       (Apple Mail, iOS Mail, some Outlook variants). Gmail Android ignores
+       this and applies its own auto-transformation regardless. */
+    @media (prefers-color-scheme: dark) {
+      .e-canvas { background-color: #1A1510 !important; }
+      .e-header { background-color: #3A2A22 !important; }
+      .e-card { background-color: #2A221B !important; }
+      .e-card-title { color: #F5EDE5 !important; }
+      .e-card-body { color: #D4C8BC !important; }
+    }
     .content-outer { max-width: 600px !important; }
     .content-inner { max-width: 600px !important; }
     @media only screen and (min-width: 960px) {
@@ -272,8 +285,8 @@ export function renderEmailHtml(design: Design, baseUrl?: string): string {
     }
   </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #FFECE5; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #FFECE5;">
+<body class="e-canvas" style="margin: 0; padding: 0; background-color: #FAF7F2; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="e-canvas" style="background-color: #FAF7F2;">
     <tr>
       <td align="center" class="content-outer" style="padding-top: 20px; padding-bottom: 20px; padding-left: 16px; padding-right: 16px; max-width: 600px;">
         <table role="presentation" class="content-inner" cellpadding="0" cellspacing="0" border="0" style="font-family: Instrument Sans, sans-serif; width: 100%; max-width: 600px; margin: 0 auto;">
