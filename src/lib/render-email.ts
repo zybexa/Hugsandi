@@ -1,18 +1,21 @@
 import { Design, Block, BlockStyle } from '@/types/design';
 
 // Gmail Android dark mode aggressively inverts CSS background-color but does
-// not touch background-image (including CSS gradients). Output both so the
-// gradient overrides the inverted color in Gmail while older clients that
-// don't support gradients fall back to the literal background-color.
+// not touch background-image. Use the long-form `background-image` property
+// (NOT the `background:` shorthand) so the image becomes a LAYER drawn on top
+// of background-color rather than competing with it. Even if Gmail rewrites
+// background-color to dark, the opaque gradient image covers it. Older clients
+// that don't support linear-gradient ignore the invalid background-image and
+// fall back to the literal background-color.
 function bgFix(color: string): string {
-  return `background-color: ${color}; background: linear-gradient(${color}, ${color}) !important;`;
+  return `background-color: ${color}; background-image: linear-gradient(${color}, ${color});`;
 }
 
 function buildInlineStyle(style: BlockStyle): string {
   const parts: string[] = [];
   if (style.backgroundColor) {
     parts.push(`background-color: ${style.backgroundColor}`);
-    parts.push(`background: linear-gradient(${style.backgroundColor}, ${style.backgroundColor}) !important`);
+    parts.push(`background-image: linear-gradient(${style.backgroundColor}, ${style.backgroundColor})`);
   }
   if (style.color) parts.push(`color: ${style.color}`);
   if (style.fontFamily) parts.push(`font-family: ${style.fontFamily}`);
