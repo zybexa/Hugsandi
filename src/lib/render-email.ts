@@ -127,7 +127,7 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
       const ctaWeight = '500';
 
       const contentBg = '#ffffff';
-      const placeholderBg = '#F0E0CC';
+      const placeholderBg = '#E8E8E8';
       const hasImage = d.imageSrc?.trim();
       const imageToggleOn = !!d.imageSrc;
       const placeholderSrc = absolutize('/placeholder-card.png', baseUrl);
