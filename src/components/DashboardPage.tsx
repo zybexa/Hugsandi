@@ -80,6 +80,18 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Poll for delivery stat updates every 15 seconds (silent, no loading spinner)
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (document.hidden) return;
+      try {
+        const res = await fetch(`/api/newsletters?t=${Date.now()}`, { cache: 'no-store' });
+        if (res.ok) setData(await res.json());
+      } catch { /* silent */ }
+    }, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
   function handleCreate() {
     if (!createName.trim()) return;
     router.push(`/editor?name=${encodeURIComponent(createName.trim())}`);
