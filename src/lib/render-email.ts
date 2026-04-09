@@ -130,13 +130,14 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
       const placeholderBg = '#F0E0CC';
       const hasImage = d.imageSrc?.trim();
       const imageToggleOn = !!d.imageSrc;
+      const placeholderSrc = absolutize('/placeholder-card.png', baseUrl);
       return `${hasImage ? `<tr>
   <td class="e-card" style="padding: 0; line-height: 0; background-color: ${contentBg}; border-radius: 24px 24px 0 0;">
     <img src="${absolutize(d.imageSrc, baseUrl)}" alt="${escapeHtml(d.imageAlt)}" width="100%" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0; border-radius: 24px 24px 0 0;" />
   </td>
 </tr>` : imageToggleOn ? `<tr>
-  <td class="e-card" style="padding: 0; line-height: 0; background-color: ${placeholderBg}; border-radius: 24px 24px 0 0; height: 200px;">
-    &nbsp;
+  <td class="e-card" style="padding: 0; line-height: 0; background-color: ${placeholderBg}; border-radius: 24px 24px 0 0;">
+    <img src="${placeholderSrc}" alt="" width="600" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0; border-radius: 24px 24px 0 0;" />
   </td>
 </tr>` : ''}
 <tr>
