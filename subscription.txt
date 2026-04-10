@@ -8,7 +8,7 @@ document.getElementById('newsletter-form').addEventListener('submit', async (e) 
   e.preventDefault();
   const email = document.getElementById('newsletter-email').value;
 
-  const res = await fetch('https://hugsandi-email.vercel.app/api/subscribe', {
+  const res = await fetch('https://frettabref.vercel.app/api/subscribe', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
