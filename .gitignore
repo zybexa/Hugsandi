@@ -36,3 +36,7 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# invoice files
+generate-invoice.js
+reikningur.pdf
