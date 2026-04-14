@@ -230,7 +230,7 @@ export default function DashboardPage() {
                             )}
                           </td>
                           <td className="px-3 py-2.5 hidden lg:table-cell text-[0.8125rem] text-skin-text-secondary tabular-nums">
-                            {isSent ? nl.recipientCount : '\u2014'}
+                            {isSent ? nl.recipientCount : data.subscriberCount}
                           </td>
                           <td className="px-3 py-2.5 hidden lg:table-cell text-[0.8125rem] text-skin-text-secondary tabular-nums">
                             {isSent ? `${nl.deliveredCount} (${nl.deliveredPercent}%)` : '\u2014'}
