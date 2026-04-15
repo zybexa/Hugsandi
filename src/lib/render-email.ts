@@ -188,17 +188,25 @@ ${d.ctaText ? (() => {
         ? `background-image: url('${absolutize(d.backgroundImage, baseUrl)}'); background-size: cover; background-position: center;`
         : '';
       const bgColor = d.backgroundColor || '#1F0318';
+      // Sentinel value '__hidden__' means the user explicitly removed the
+      // logo. Empty/missing value falls back to the static default asset.
+      const HIDDEN = '__hidden__';
+      const logoHidden = d.logoSrc === HIDDEN;
+      const orgLogoHidden = d.orgLogoSrc === HIDDEN;
+      const churchLogoHidden = d.churchLogoSrc === HIDDEN;
+      const topRowVisible = !logoHidden || !!d.contactEmail;
+      const churchRowVisible = !churchLogoHidden || d.websiteUrl || d.unsubscribeLabel || d.unsubscribeUrl;
 
       return `<tr>
   <td style="background-color: ${bgColor}; ${bgStyle} padding: 32px 40px; border-radius: 12px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-      ${true ? `<tr>
+      ${topRowVisible ? `<tr>
         <td style="padding-bottom: 24px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
             <tr>
-              <td style="vertical-align: middle; width: 1px;">
+              ${!logoHidden ? `<td style="vertical-align: middle; width: 1px;">
                 <img src="${absolutize(d.logoSrc || '/logo2.png', baseUrl)}" alt="Logo" width="56" height="56" style="display: block; width: 56px; height: 56px; border: 0;" />
-              </td>
+              </td>` : ''}
               ${d.contactEmail ? `<td align="right" style="vertical-align: middle;">
                 <a href="mailto:${d.contactEmail}" style="color: #FFEDE6; font-family: Instrument Sans, sans-serif; font-weight: 400; font-size: 20px; line-height: 1.3; letter-spacing: 0.02em; text-decoration: none;">${escapeHtml(d.contactEmail)}</a>
               </td>` : ''}
@@ -206,18 +214,18 @@ ${d.ctaText ? (() => {
           </table>
         </td>
       </tr>` : ''}
-      ${true ? `<tr class="footer-mobile-center">
+      ${!orgLogoHidden ? `<tr class="footer-mobile-center">
         <td align="center">
           <img src="${absolutize(d.orgLogoSrc || '/slogan.png', baseUrl)}" alt="Slogan" width="100%" style="display: block; width: 100%; height: auto; border: 0;" />
         </td>
       </tr>` : ''}
-      ${d.churchLogoSrc || d.websiteUrl || d.unsubscribeLabel || d.unsubscribeUrl ? `<tr>
+      ${churchRowVisible ? `<tr>
         <td style="padding-top: 56px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="footer-stack">
             <tr>
-              <td class="footer-col" style="vertical-align: middle;">
+              ${!churchLogoHidden ? `<td class="footer-col" style="vertical-align: middle;">
                 <img src="${absolutize(d.churchLogoSrc || '/kirkjan.png', baseUrl)}" alt="" width="183" style="display: block; width: 183px; height: auto; border: 0;" />
-              </td>
+              </td>` : ''}
               ${d.websiteUrl || d.unsubscribeLabel || d.unsubscribeUrl ? `<td class="footer-col footer-col-links" align="right" style="vertical-align: middle;">
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                   <tr>

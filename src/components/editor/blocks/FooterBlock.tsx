@@ -60,6 +60,19 @@ export default function FooterBlock({ data, onChange, readOnly }: FooterBlockPro
     if (oldUrl && oldUrl.includes('/newsletter-images/')) deleteStorageFile(oldUrl);
   }
 
+  // Sentinel value that tells render-email.ts to omit the logo entirely.
+  const HIDDEN = '__hidden__';
+
+  function handleHideLogo(field: 'logoSrc' | 'orgLogoSrc' | 'churchLogoSrc') {
+    const oldUrl = data[field];
+    onChange({ ...data, [field]: HIDDEN });
+    if (oldUrl && oldUrl.includes('/newsletter-images/')) deleteStorageFile(oldUrl);
+  }
+
+  function handleShowLogo(field: 'logoSrc' | 'orgLogoSrc' | 'churchLogoSrc') {
+    onChange({ ...data, [field]: '' });
+  }
+
   function renderLogoField(
     label: string,
     field: 'logoSrc' | 'orgLogoSrc' | 'churchLogoSrc',
@@ -67,43 +80,69 @@ export default function FooterBlock({ data, onChange, readOnly }: FooterBlockPro
     alt: string,
   ) {
     const current = data[field];
-    const displaySrc = current || defaultPath;
-    const isCustom = !!current && current.includes('/newsletter-images/');
+    const isHidden = current === HIDDEN;
+    const displaySrc = isHidden ? '' : (current || defaultPath);
+    const isCustom = !!current && current !== HIDDEN && current.includes('/newsletter-images/');
     const isUploading = uploadingKey === field;
     return (
       <div>
         <label className="text-xs text-skin-text-secondary uppercase tracking-wide">{label}</label>
-        <div className="mt-1 flex items-center gap-3">
-          <label className="px-3 py-1.5 bg-skin-accent-bg-light border border-skin-accent-border rounded text-sm font-semibold text-skin-text-primary cursor-pointer hover:bg-skin-accent-bg transition-colors">
-            {isUploading
-              ? t('common.uploading')
-              : isCustom
-                ? t('footer.changeLogo')
-                : t('footer.uploadLogo')}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleUploadLogo(e, field)}
-              disabled={readOnly || isUploading}
-              className="hidden"
-            />
-          </label>
-          <div className="relative">
-            <img src={displaySrc} alt={alt} className="h-10 object-contain" />
-            {isCustom && !readOnly && (
+        {isHidden ? (
+          <div className="mt-1 flex items-center gap-3">
+            <span className="text-xs text-skin-text-muted italic">{t('footer.logoHidden')}</span>
+            {!readOnly && (
               <button
                 type="button"
-                onClick={() => handleResetLogo(field)}
-                className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-skin-danger-bg hover:bg-skin-danger border border-skin-danger-bg hover:border-skin-danger rounded-full flex items-center justify-center transition-colors"
-                title={t('footer.resetLogo')}
+                onClick={() => handleShowLogo(field)}
+                className="px-3 py-1 text-xs font-medium rounded-md border border-skin-text-muted bg-skin-tertiary hover:bg-skin-elevated text-skin-text-secondary transition-colors"
               >
-                <svg width="8" height="8" viewBox="0 0 16 16" fill="white">
-                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                </svg>
+                {t('footer.showLogo')}
               </button>
             )}
           </div>
-        </div>
+        ) : (
+          <div className="mt-1 flex items-center gap-3">
+            <label className="px-3 py-1.5 bg-skin-accent-bg-light border border-skin-accent-border rounded text-sm font-semibold text-skin-text-primary cursor-pointer hover:bg-skin-accent-bg transition-colors">
+              {isUploading
+                ? t('common.uploading')
+                : isCustom
+                  ? t('footer.changeLogo')
+                  : t('footer.uploadLogo')}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleUploadLogo(e, field)}
+                disabled={readOnly || isUploading}
+                className="hidden"
+              />
+            </label>
+            <div className="relative">
+              <img src={displaySrc} alt={alt} className="h-10 object-contain" />
+              {isCustom && !readOnly && (
+                <button
+                  type="button"
+                  onClick={() => handleResetLogo(field)}
+                  className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-skin-danger-bg hover:bg-skin-danger border border-skin-danger-bg hover:border-skin-danger rounded-full flex items-center justify-center transition-colors"
+                  title={t('footer.resetLogo')}
+                >
+                  <svg width="8" height="8" viewBox="0 0 16 16" fill="white">
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                  </svg>
+                </button>
+              )}
+            </div>
+            {!readOnly && (
+              <button
+                type="button"
+                onClick={() => handleHideLogo(field)}
+                className="text-xs text-skin-danger hover:text-skin-text-primary transition-colors"
+                title={t('footer.removeLogoTitle')}
+              >
+                {t('footer.removeLogo')}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     );
   }
