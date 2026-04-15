@@ -94,7 +94,7 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
       </tr>
       <tr>
         <td colspan="2" style="padding-top: 32px; padding-bottom: 16px;">
-          <h1 style="margin: 0; font-size: 40px; font-weight: 600; color: #1F0318; font-family: Instrument Sans, sans-serif; font-style: normal; text-decoration: none; text-align: center; line-height: 1.2; letter-spacing: 0px;">${escapeHtml(d.headline)}</h1>
+          <h1 style="margin: 0; font-size: 40px; font-weight: 600; color: ${d.headlineColor || '#1F0318'}; font-family: Instrument Sans, sans-serif; font-style: normal; text-decoration: none; text-align: center; line-height: 1.2; letter-spacing: 0px;">${escapeHtml(d.headline)}</h1>
         </td>
       </tr>
     </table>
@@ -105,7 +105,7 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
     case 'content-card': {
       const d = block.data;
       const bodyFont = 'Instrument Sans, sans-serif';
-      const bodyColor = '#1f0318';
+      const bodyColor = d.bodyColor || '#1f0318';
       const bodySize = '16px';
       const bodyWeight = '400';
       const bodyFontStyle = 'normal';
@@ -145,7 +145,7 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr>
         <td style="padding-bottom: 24px;">
-          <h2 class="e-card-title" style="margin: 0; font-size: ${titleSize}; font-weight: ${titleWeight}; color: #1f0318; font-family: ${titleFont}; font-style: ${titleFontStyle}; text-decoration: ${titleDecoration}; line-height: 1.1; letter-spacing: 0px;">${escapeHtml(d.title)}</h2>
+          <h2 class="e-card-title" style="margin: 0; font-size: ${titleSize}; font-weight: ${titleWeight}; color: ${d.titleColor || '#1f0318'}; font-family: ${titleFont}; font-style: ${titleFontStyle}; text-decoration: ${titleDecoration}; line-height: 1.1; letter-spacing: 0px;">${escapeHtml(d.title)}</h2>
         </td>
       </tr>
       <tr>
@@ -221,12 +221,18 @@ ${d.ctaText ? (() => {
               ${d.websiteUrl || d.unsubscribeLabel || d.unsubscribeUrl ? `<td class="footer-col footer-col-links" align="right" style="vertical-align: middle;">
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                    ${d.websiteUrl ? `<td style="padding-right: ${d.unsubscribeLabel || d.unsubscribeUrl ? '24px' : '0'};">
-                      <a href="${ensureAbsoluteUrl(d.websiteUrl)}" style="color: #FFEDE6; font-family: Instrument Sans, sans-serif; font-weight: 500; font-size: 12px; line-height: 1.5; letter-spacing: 0px; text-decoration: none; border-bottom: 1px solid #FFEDE6; padding-bottom: 2px;">${escapeHtml(d.websiteLabel || d.websiteUrl)}</a>
-                    </td>` : ''}
-                    ${d.unsubscribeLabel || d.unsubscribeUrl ? `<td>
-                      <a href="${ensureAbsoluteUrl(d.unsubscribeUrl || '#')}" style="color: #FFEDE6; font-family: Instrument Sans, sans-serif; font-weight: 500; font-size: 12px; line-height: 1.5; letter-spacing: 0px; text-decoration: none; border-bottom: 1px solid #FFEDE6; padding-bottom: 2px;">${escapeHtml(d.unsubscribeLabel || 'Unsubscribe')}</a>
-                    </td>` : ''}
+                    ${d.websiteUrl ? (() => {
+                      const c = d.websiteColor || '#FFEDE6';
+                      return `<td style="padding-right: ${d.unsubscribeLabel || d.unsubscribeUrl ? '24px' : '0'};">
+                      <a href="${ensureAbsoluteUrl(d.websiteUrl)}" style="color: ${c}; font-family: Instrument Sans, sans-serif; font-weight: 500; font-size: 12px; line-height: 1.5; letter-spacing: 0px; text-decoration: none; border-bottom: 1px solid ${c}; padding-bottom: 2px;">${escapeHtml(d.websiteLabel || d.websiteUrl)}</a>
+                    </td>`;
+                    })() : ''}
+                    ${d.unsubscribeLabel || d.unsubscribeUrl ? (() => {
+                      const c = d.unsubscribeColor || '#FFEDE6';
+                      return `<td>
+                      <a href="${ensureAbsoluteUrl(d.unsubscribeUrl || '#')}" style="color: ${c}; font-family: Instrument Sans, sans-serif; font-weight: 500; font-size: 12px; line-height: 1.5; letter-spacing: 0px; text-decoration: none; border-bottom: 1px solid ${c}; padding-bottom: 2px;">${escapeHtml(d.unsubscribeLabel || 'Unsubscribe')}</a>
+                    </td>`;
+                    })() : ''}
                   </tr>
                 </table>
               </td>` : ''}

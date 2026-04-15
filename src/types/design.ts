@@ -101,8 +101,10 @@ export interface FooterBlockData {
   churchLogoWidth: string;
   websiteUrl: string;
   websiteLabel: string;
+  websiteColor?: string;
   unsubscribeLabel: string;
   unsubscribeUrl: string;
+  unsubscribeColor?: string;
   textColor: string;
 }
 

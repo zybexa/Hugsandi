@@ -5,6 +5,7 @@ const is: Record<string, string> = {
   // ── Common (shared across components) ────────────────
   'common.cancel': 'Hætta við',
   'common.save': 'Vista',
+  'common.color': 'Litur',
   'common.delete': 'Eyða',
   'common.edit': 'Breyta',
   'common.create': 'Búa til',
