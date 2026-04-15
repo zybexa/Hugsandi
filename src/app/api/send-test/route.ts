@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { headers } from 'next/headers';
 import { getSupabase } from '@/lib/supabase';
 import { getResend } from '@/lib/resend';
 import { renderEmailHtml } from '@/lib/render-email';
 import { Design } from '@/types/design';
 import { DEFAULT_GLOBAL_STYLE } from '@/lib/defaults';
+import { getBaseUrl } from '@/lib/base-url';
 
 // Test-send endpoint. Sends the newsletter to the entire email list with a
 // dummy [TEST] subject prefix. Unlike /api/send, this route:
@@ -61,10 +61,7 @@ export async function POST(request: Request) {
   // into the same Gmail conversation.
   const testSubject = `[TEST] ${design.name || 'Newsletter'} — ${new Date().toISOString().slice(11, 19)}`;
 
-  const headersList = headers();
-  const host = headersList.get('host') || 'localhost:3000';
-  const protocol = headersList.get('x-forwarded-proto') || 'http';
-  const baseUrl = `${protocol}://${host}`;
+  const baseUrl = getBaseUrl();
   const viewUrl = `${baseUrl}/view/${designId}`;
 
   const designWithViewUrl: Design = {

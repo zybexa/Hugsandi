@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { headers } from 'next/headers';
 import { getSupabase } from '@/lib/supabase';
 import { getResend } from '@/lib/resend';
 import { renderEmailHtml } from '@/lib/render-email';
 import { Design } from '@/types/design';
 import { DEFAULT_GLOBAL_STYLE } from '@/lib/defaults';
+import { getBaseUrl } from '@/lib/base-url';
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -83,10 +83,7 @@ export async function POST(request: Request) {
   const sendId = sendRecord.id;
 
   // 7. Build the view URL and inject into header blocks
-  const headersList = headers();
-  const host = headersList.get('host') || 'localhost:3000';
-  const protocol = headersList.get('x-forwarded-proto') || 'http';
-  const baseUrl = `${protocol}://${host}`;
+  const baseUrl = getBaseUrl();
   const viewUrl = `${baseUrl}/view/${designId}`;
 
   const designWithViewUrl: Design = {
