@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { HslColorPicker } from 'react-colorful';
 
 interface ColorPickerInputProps {
   value: string;
@@ -159,6 +160,14 @@ export default function ColorPickerInput({
           className="absolute z-50 top-full left-0 mt-2 p-3 bg-skin-secondary border border-skin-border-ui rounded-lg shadow-lg"
           style={{ minWidth: 240 }}
         >
+          {/* 2D saturation/lightness surface + hue ring */}
+          <div className="mb-3">
+            <HslColorPicker
+              color={hsl}
+              onChange={(c) => onChange(hslToHex(c))}
+            />
+          </div>
+
           {/* Hue slider */}
           <div className="mb-3">
             <div className="flex items-center justify-between text-[10px] text-skin-text-muted uppercase tracking-wide mb-1">
