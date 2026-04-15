@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { HeaderBlockData, BlockStyle } from '@/types/design';
 import { saveDefault } from '@/lib/defaults';
 import { useTranslation } from '@/lib/i18n';
+import ColorPickerInput from '../ColorPickerInput';
 
 interface HeaderBlockProps {
   data: HeaderBlockData;
@@ -102,16 +103,13 @@ export default function HeaderBlock({ data, onChange, blockStyle, readOnly }: He
           disabled={readOnly}
           className="w-full mt-1 px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
         />
-        <div className="mt-1.5 flex items-center gap-2">
-          <label className="text-[10px] text-skin-text-muted uppercase tracking-wide">{t('common.color')}</label>
-          <input
-            type="color"
-            value={data.viewInBrowserColor || '#000000'}
-            onChange={(e) => onChange({ ...data, viewInBrowserColor: e.target.value })}
-            disabled={readOnly}
-            className="w-7 h-7 rounded border border-skin-border bg-transparent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-          />
-        </div>
+        <ColorPickerInput
+          value={data.viewInBrowserColor}
+          onChange={(v) => onChange({ ...data, viewInBrowserColor: v })}
+          disabled={readOnly}
+          label={t('common.color')}
+          fallback="#000000"
+        />
       </div>
 
       {/* Headline */}
@@ -125,16 +123,13 @@ export default function HeaderBlock({ data, onChange, blockStyle, readOnly }: He
           disabled={readOnly}
           className="w-full mt-1 px-3 py-2 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
         />
-        <div className="mt-1.5 flex items-center gap-2">
-          <label className="text-[10px] text-skin-text-muted uppercase tracking-wide">{t('common.color')}</label>
-          <input
-            type="color"
-            value={data.headlineColor || '#1F0318'}
-            onChange={(e) => onChange({ ...data, headlineColor: e.target.value })}
-            disabled={readOnly}
-            className="w-7 h-7 rounded border border-skin-border bg-transparent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-          />
-        </div>
+        <ColorPickerInput
+          value={data.headlineColor}
+          onChange={(v) => onChange({ ...data, headlineColor: v })}
+          disabled={readOnly}
+          label={t('common.color')}
+          fallback="#1F0318"
+        />
       </div>
 
       {/* Save as default */}

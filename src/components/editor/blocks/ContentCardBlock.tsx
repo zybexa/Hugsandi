@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ContentCardBlockData, BlockStyle, DesignImage } from '@/types/design';
 import { saveDefault } from '@/lib/defaults';
 import { useTranslation } from '@/lib/i18n';
+import ColorPickerInput from '../ColorPickerInput';
 
 interface ContentCardBlockProps {
   data: ContentCardBlockData;
@@ -58,16 +59,13 @@ export default function ContentCardBlock({ data, onChange, readOnly }: ContentCa
           disabled={readOnly}
           className="w-full mt-1 px-3 py-2 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
         />
-        <div className="mt-1.5 flex items-center gap-2">
-          <label className="text-[10px] text-skin-text-muted uppercase tracking-wide">{t('common.color')}</label>
-          <input
-            type="color"
-            value={data.titleColor || '#1f0318'}
-            onChange={(e) => onChange({ ...data, titleColor: e.target.value })}
-            disabled={readOnly}
-            className="w-7 h-7 rounded border border-skin-border bg-transparent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-          />
-        </div>
+        <ColorPickerInput
+          value={data.titleColor}
+          onChange={(v) => onChange({ ...data, titleColor: v })}
+          disabled={readOnly}
+          label={t('common.color')}
+          fallback="#1f0318"
+        />
       </div>
 
       {/* Body */}
@@ -81,16 +79,13 @@ export default function ContentCardBlock({ data, onChange, readOnly }: ContentCa
           disabled={readOnly}
           className="w-full mt-1 px-3 py-2 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm resize-y placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
         />
-        <div className="mt-1.5 flex items-center gap-2">
-          <label className="text-[10px] text-skin-text-muted uppercase tracking-wide">{t('common.color')}</label>
-          <input
-            type="color"
-            value={data.bodyColor || '#1f0318'}
-            onChange={(e) => onChange({ ...data, bodyColor: e.target.value })}
-            disabled={readOnly}
-            className="w-7 h-7 rounded border border-skin-border bg-transparent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-          />
-        </div>
+        <ColorPickerInput
+          value={data.bodyColor}
+          onChange={(v) => onChange({ ...data, bodyColor: v })}
+          disabled={readOnly}
+          label={t('common.color')}
+          fallback="#1f0318"
+        />
       </div>
 
       {/* CTA Button */}

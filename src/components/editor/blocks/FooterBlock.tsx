@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FooterBlockData, BlockStyle } from '@/types/design';
 import { saveDefault } from '@/lib/defaults';
 import { useTranslation } from '@/lib/i18n';
+import ColorPickerInput from '../ColorPickerInput';
 
 interface FooterBlockProps {
   data: FooterBlockData;
@@ -79,16 +80,13 @@ export default function FooterBlock({ data, onChange, readOnly }: FooterBlockPro
             className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
           />
         </div>
-        <div className="mt-1.5 flex items-center gap-2">
-          <label className="text-[10px] text-skin-text-muted uppercase tracking-wide">{t('common.color')}</label>
-          <input
-            type="color"
-            value={data.websiteColor || '#FFEDE6'}
-            onChange={(e) => onChange({ ...data, websiteColor: e.target.value })}
-            disabled={readOnly}
-            className="w-7 h-7 rounded border border-skin-border bg-transparent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-          />
-        </div>
+        <ColorPickerInput
+          value={data.websiteColor || ''}
+          onChange={(v) => onChange({ ...data, websiteColor: v })}
+          disabled={readOnly}
+          label={t('common.color')}
+          fallback="#FFEDE6"
+        />
       </div>
 
       <div>
@@ -111,16 +109,13 @@ export default function FooterBlock({ data, onChange, readOnly }: FooterBlockPro
             className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
           />
         </div>
-        <div className="mt-1.5 flex items-center gap-2">
-          <label className="text-[10px] text-skin-text-muted uppercase tracking-wide">{t('common.color')}</label>
-          <input
-            type="color"
-            value={data.unsubscribeColor || '#FFEDE6'}
-            onChange={(e) => onChange({ ...data, unsubscribeColor: e.target.value })}
-            disabled={readOnly}
-            className="w-7 h-7 rounded border border-skin-border bg-transparent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-          />
-        </div>
+        <ColorPickerInput
+          value={data.unsubscribeColor || ''}
+          onChange={(v) => onChange({ ...data, unsubscribeColor: v })}
+          disabled={readOnly}
+          label={t('common.color')}
+          fallback="#FFEDE6"
+        />
       </div>
 
       {/* Save as default */}
