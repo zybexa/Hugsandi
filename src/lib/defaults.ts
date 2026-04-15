@@ -109,7 +109,7 @@ export function createDefaultBlock(type: BlockType, defaults?: SavedDefaults): B
         titleLetterSpacing: '0px',
         titleItalic: false,
         titleUnderline: false,
-        body: '',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eget quam magna. Nam id maximus ipsum. Aenean sagittis enim est, non cursus lorem sodales vitae. Suspendisse potenti. Ut porttitor augue vel aliquet sodales. Ut lacus quam, congue vitae felis et, consequat pellentesque justo. Vestibulum vulputate nisi non nunc interdum, eu luctus libero imperdiet. Aenean luctus lacinia ligula, a lobortis leo varius et. Donec feugiat mauris accumsan purus ullamcorper, in egestas est efficitur. Donec in turpis sit amet ligula mollis vulputate vel non risus. Fusce vitae ex vel orci convallis sollicitudin. Sed ac sapien mattis, vestibulum leo a, eleifend urna. Nullam vehicula ut quam vel fermentum. Aenean vulputate, arcu ultrices malesuada ultricies, velit enim ullamcorper lacus, in laoreet nibh ante ac felis. Nullam vitae egestas diam. Aliquam erat volutpat.',
         bodyColor: '#333333',
         bodyFont: 'Arial, Helvetica, sans-serif',
         bodySize: '15px',
