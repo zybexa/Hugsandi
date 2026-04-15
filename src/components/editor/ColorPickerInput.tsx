@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { HslColorPicker, type HslColor } from 'react-colorful';
 
 interface ColorPickerInputProps {
   value: string;
@@ -10,6 +9,8 @@ interface ColorPickerInputProps {
   label?: string;
   fallback?: string;
 }
+
+interface HslColor { h: number; s: number; l: number; }
 
 // HEX <-> HSL conversions -------------------------------------------------
 
@@ -56,6 +57,29 @@ function hslToHex({ h, s, l }: HslColor): string {
 
 // -------------------------------------------------------------------------
 
+// Shared base styles for the range sliders so the gradient shows through
+const sliderClass =
+  'w-full h-3 rounded appearance-none cursor-pointer ' +
+  '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 ' +
+  '[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white ' +
+  '[&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-skin-border-ui ' +
+  '[&::-webkit-slider-thumb]:shadow-md ' +
+  '[&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full ' +
+  '[&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-skin-border-ui';
+
+const hueGradient =
+  'linear-gradient(to right, ' +
+  'hsl(0,100%,50%), hsl(60,100%,50%), hsl(120,100%,50%), ' +
+  'hsl(180,100%,50%), hsl(240,100%,50%), hsl(300,100%,50%), hsl(360,100%,50%))';
+
+const satGradient = (h: number, l: number) =>
+  `linear-gradient(to right, hsl(${h},0%,${l}%), hsl(${h},100%,${l}%))`;
+
+const lightGradient = (h: number, s: number) =>
+  `linear-gradient(to right, hsl(${h},${s}%,0%), hsl(${h},${s}%,50%), hsl(${h},${s}%,100%))`;
+
+// -------------------------------------------------------------------------
+
 export default function ColorPickerInput({
   value,
   onChange,
@@ -73,7 +97,6 @@ export default function ColorPickerInput({
     setDraft(currentValue);
   }, [currentValue]);
 
-  // Close on outside click or Escape
   useEffect(() => {
     if (!open) return;
     const onPointer = (e: PointerEvent) => {
@@ -93,6 +116,9 @@ export default function ColorPickerInput({
   }, [open]);
 
   const hsl = hexToHsl(currentValue);
+  const updateHsl = (partial: Partial<HslColor>) => {
+    onChange(hslToHex({ ...hsl, ...partial }));
+  };
 
   return (
     <div className="mt-1.5 flex items-center gap-2 relative">
@@ -131,46 +157,88 @@ export default function ColorPickerInput({
         <div
           ref={popoverRef}
           className="absolute z-50 top-full left-0 mt-2 p-3 bg-skin-secondary border border-skin-border-ui rounded-lg shadow-lg"
-          style={{ minWidth: 220 }}
+          style={{ minWidth: 240 }}
         >
-          <HslColorPicker
-            color={hsl}
-            onChange={(c) => onChange(hslToHex(c))}
-          />
-          <div className="mt-3 grid grid-cols-3 gap-1.5 text-[10px] text-skin-text-muted uppercase tracking-wide">
-            <label className="flex flex-col items-start gap-0.5">
-              H
-              <input
-                type="number"
-                min={0}
-                max={360}
-                value={hsl.h}
-                onChange={(e) => onChange(hslToHex({ ...hsl, h: Math.max(0, Math.min(360, Number(e.target.value) || 0)) }))}
-                className="w-full px-2 py-1 bg-skin-input border border-skin-border rounded text-skin-text-primary text-xs font-mono"
-              />
-            </label>
-            <label className="flex flex-col items-start gap-0.5">
-              S
-              <input
-                type="number"
-                min={0}
-                max={100}
-                value={hsl.s}
-                onChange={(e) => onChange(hslToHex({ ...hsl, s: Math.max(0, Math.min(100, Number(e.target.value) || 0)) }))}
-                className="w-full px-2 py-1 bg-skin-input border border-skin-border rounded text-skin-text-primary text-xs font-mono"
-              />
-            </label>
-            <label className="flex flex-col items-start gap-0.5">
-              L
-              <input
-                type="number"
-                min={0}
-                max={100}
-                value={hsl.l}
-                onChange={(e) => onChange(hslToHex({ ...hsl, l: Math.max(0, Math.min(100, Number(e.target.value) || 0)) }))}
-                className="w-full px-2 py-1 bg-skin-input border border-skin-border rounded text-skin-text-primary text-xs font-mono"
-              />
-            </label>
+          {/* Hue slider */}
+          <div className="mb-3">
+            <div className="flex items-center justify-between text-[10px] text-skin-text-muted uppercase tracking-wide mb-1">
+              <span>H</span>
+              <span className="font-mono text-skin-text-secondary normal-case tracking-normal">{hsl.h}°</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={360}
+              value={hsl.h}
+              onChange={(e) => updateHsl({ h: Number(e.target.value) })}
+              className={sliderClass}
+              style={{ background: hueGradient }}
+            />
+          </div>
+
+          {/* Saturation slider */}
+          <div className="mb-3">
+            <div className="flex items-center justify-between text-[10px] text-skin-text-muted uppercase tracking-wide mb-1">
+              <span>S</span>
+              <span className="font-mono text-skin-text-secondary normal-case tracking-normal">{hsl.s}%</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={hsl.s}
+              onChange={(e) => updateHsl({ s: Number(e.target.value) })}
+              className={sliderClass}
+              style={{ background: satGradient(hsl.h, hsl.l) }}
+            />
+          </div>
+
+          {/* Lightness slider */}
+          <div className="mb-3">
+            <div className="flex items-center justify-between text-[10px] text-skin-text-muted uppercase tracking-wide mb-1">
+              <span>L</span>
+              <span className="font-mono text-skin-text-secondary normal-case tracking-normal">{hsl.l}%</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={hsl.l}
+              onChange={(e) => updateHsl({ l: Number(e.target.value) })}
+              className={sliderClass}
+              style={{ background: lightGradient(hsl.h, hsl.s) }}
+            />
+          </div>
+
+          {/* Numeric H/S/L inputs for precision */}
+          <div className="grid grid-cols-3 gap-1.5">
+            <input
+              type="number"
+              min={0}
+              max={360}
+              value={hsl.h}
+              onChange={(e) => updateHsl({ h: Math.max(0, Math.min(360, Number(e.target.value) || 0)) })}
+              aria-label="Hue"
+              className="px-2 py-1 bg-skin-input border border-skin-border rounded text-skin-text-primary text-xs font-mono"
+            />
+            <input
+              type="number"
+              min={0}
+              max={100}
+              value={hsl.s}
+              onChange={(e) => updateHsl({ s: Math.max(0, Math.min(100, Number(e.target.value) || 0)) })}
+              aria-label="Saturation"
+              className="px-2 py-1 bg-skin-input border border-skin-border rounded text-skin-text-primary text-xs font-mono"
+            />
+            <input
+              type="number"
+              min={0}
+              max={100}
+              value={hsl.l}
+              onChange={(e) => updateHsl({ l: Math.max(0, Math.min(100, Number(e.target.value) || 0)) })}
+              aria-label="Lightness"
+              className="px-2 py-1 bg-skin-input border border-skin-border rounded text-skin-text-primary text-xs font-mono"
+            />
           </div>
         </div>
       )}
