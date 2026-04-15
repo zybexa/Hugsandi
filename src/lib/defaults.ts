@@ -75,7 +75,7 @@ export function createDefaultBlock(type: BlockType, defaults?: SavedDefaults): B
         viewInBrowserBold: false,
         viewInBrowserItalic: false,
         viewInBrowserUnderline: false,
-        headline: '',
+        headline: 'Test Headline',
         headlineColor: '#1f0318',
         headlineFont: 'Arial, Helvetica, sans-serif',
         headlineSize: '28px',
