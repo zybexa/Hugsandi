@@ -153,6 +153,13 @@ function EditorContent() {
   const [editingName, setEditingName] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
+  // Local draft for the bg color hex input — lets the user type invalid
+  // intermediate values (e.g. '#F') without breaking the preview. Only
+  // commit to the design state when the value matches a valid hex.
+  const currentBgColor = design.globalStyle?.backgroundColor || '#FFECE5';
+  const [bgColorDraft, setBgColorDraft] = useState(currentBgColor);
+  useEffect(() => { setBgColorDraft(currentBgColor); }, [currentBgColor]);
+
   // Sent state
   const [isSent, setIsSent] = useState(false);
   const [sentAt, setSentAt] = useState<string | null>(null);
@@ -392,15 +399,25 @@ function EditorContent() {
             </label>
             <input
               type="color"
-              value={design.globalStyle?.backgroundColor || '#FFECE5'}
+              value={currentBgColor}
               onChange={(e) => dispatch({ type: 'UPDATE_GLOBAL_STYLE', style: { backgroundColor: e.target.value } })}
               disabled={isSent}
               className="w-8 h-8 rounded border border-skin-border bg-transparent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             />
             <input
               type="text"
-              value={design.globalStyle?.backgroundColor || '#FFECE5'}
-              onChange={(e) => dispatch({ type: 'UPDATE_GLOBAL_STYLE', style: { backgroundColor: e.target.value } })}
+              value={bgColorDraft}
+              onChange={(e) => {
+                const next = e.target.value;
+                setBgColorDraft(next);
+                const normalized = next.startsWith('#') ? next : `#${next}`;
+                if (/^#[0-9a-fA-F]{6}$/.test(normalized)) {
+                  dispatch({ type: 'UPDATE_GLOBAL_STYLE', style: { backgroundColor: normalized.toUpperCase() } });
+                }
+              }}
+              onBlur={() => setBgColorDraft(currentBgColor)}
+              placeholder="#FFECE5"
+              spellCheck={false}
               disabled={isSent}
               className="px-2 py-1 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm w-24 font-mono disabled:opacity-40 disabled:cursor-not-allowed"
             />
