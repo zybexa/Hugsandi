@@ -161,7 +161,7 @@ export default function ColorPickerInput({
           style={{ minWidth: 240 }}
         >
           {/* 2D saturation/lightness surface + hue ring */}
-          <div className="mb-3">
+          <div className="mb-6">
             <HslColorPicker
               color={hsl}
               onChange={(c) => onChange(hslToHex(c))}
