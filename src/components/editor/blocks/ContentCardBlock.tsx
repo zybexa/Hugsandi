@@ -22,6 +22,17 @@ export default function ContentCardBlock({ data, onChange, readOnly }: ContentCa
 
   return (
     <div className="space-y-3">
+      {/* Background color */}
+      <div>
+        <label className="text-xs text-skin-text-secondary uppercase tracking-wide">{t('card.backgroundColor')}</label>
+        <ColorPickerInput
+          value={data.backgroundColor || ''}
+          onChange={(v) => onChange({ ...data, backgroundColor: v })}
+          disabled={readOnly}
+          fallback="#ffffff"
+        />
+      </div>
+
       {/* Image */}
       <div>
         <div className="flex items-center gap-3 mb-3">

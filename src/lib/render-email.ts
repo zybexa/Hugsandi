@@ -126,7 +126,7 @@ function renderBlockInner(block: Block, baseUrl?: string): string {
       const ctaSize = '20px';
       const ctaWeight = '500';
 
-      const contentBg = '#ffffff';
+      const contentBg = d.backgroundColor || '#ffffff';
       const placeholderBg = '#E8E8E8';
       const hasImage = d.imageSrc?.trim();
       const imageToggleOn = !!d.imageSrc;

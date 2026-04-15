@@ -141,6 +141,7 @@ const is: Record<string, string> = {
 
   // ── Content Card Block ──────────────────────────────
   'card.styling': 'Stíll',
+  'card.backgroundColor': 'Bakgrunnur',
   'card.image': 'Spjaldsmynd',
   'card.showImage': 'Sýna mynd',
   'card.hideImage': 'Fela mynd',

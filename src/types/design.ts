@@ -49,6 +49,7 @@ export interface HeaderBlockData {
 
 export interface ContentCardBlockData {
   type: 'content-card';
+  backgroundColor?: string;
   imageSrc: string;
   imageAlt: string;
   title: string;
