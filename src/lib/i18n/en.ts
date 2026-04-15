@@ -162,6 +162,7 @@ const en: Record<string, string> = {
 
   // ── Footer Block ────────────────────────────────────
   'footer.textColor': 'Text',
+  'footer.backgroundColor': 'Background',
   'footer.orgLogo': 'Organization Logo',
   'footer.uploadLogo': 'Upload Logo',
   'footer.changeLogo': 'Change Logo',

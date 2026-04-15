@@ -162,6 +162,7 @@ const is: Record<string, string> = {
 
   // ── Footer Block ────────────────────────────────────
   'footer.textColor': 'Texti',
+  'footer.backgroundColor': 'Bakgrunnur',
   'footer.orgLogo': 'Merki stofnunar',
   'footer.uploadLogo': 'Hlaða upp merki',
   'footer.changeLogo': 'Breyta merki',

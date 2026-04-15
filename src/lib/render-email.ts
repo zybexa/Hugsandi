@@ -187,7 +187,7 @@ ${d.ctaText ? (() => {
       const bgStyle = d.backgroundImage
         ? `background-image: url('${absolutize(d.backgroundImage, baseUrl)}'); background-size: cover; background-position: center;`
         : '';
-      const bgColor = '#1F0318';
+      const bgColor = d.backgroundColor || '#1F0318';
 
       return `<tr>
   <td style="background-color: ${bgColor}; ${bgStyle} padding: 32px 40px; border-radius: 12px;">

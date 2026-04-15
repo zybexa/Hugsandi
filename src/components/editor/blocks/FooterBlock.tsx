@@ -20,6 +20,17 @@ export default function FooterBlock({ data, onChange, readOnly }: FooterBlockPro
 
   return (
     <div className="space-y-3">
+      {/* Background color */}
+      <div>
+        <label className="text-xs text-skin-text-secondary uppercase tracking-wide">{t('footer.backgroundColor')}</label>
+        <ColorPickerInput
+          value={data.backgroundColor}
+          onChange={(v) => onChange({ ...data, backgroundColor: v })}
+          disabled={readOnly}
+          fallback="#1F0318"
+        />
+      </div>
+
       {/* Logo */}
       <div>
         <label className="text-xs text-skin-text-secondary uppercase tracking-wide">{t('footer.orgLogo')}</label>
