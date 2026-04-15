@@ -89,6 +89,9 @@ const en: Record<string, string> = {
   'editor.notFound': 'Newsletter not found',
   'editor.backToDashboard': 'Back to dashboard',
   'editor.saveFailed': 'Failed to save. Please try again.',
+  'editor.saveBeforeTest': 'Save the newsletter before sending a test.',
+  'editor.sendTestOk': 'Test sent to {count} recipient(s).',
+  'editor.sendTestFailed': 'Test send failed.',
   'editor.dismiss': 'Dismiss',
   'editor.unsavedTitle': 'Unsaved changes',
   'editor.unsavedMessage': 'You have unsaved changes. Would you like to save before leaving?',
@@ -98,6 +101,9 @@ const en: Record<string, string> = {
   // ── Block Toolbar ────────────────────────────────────
   'toolbar.contentCard': '+ Content Card',
   'toolbar.exit': 'Exit',
+  'toolbar.sendTest': 'Send test',
+  'toolbar.sendingTest': 'Sending…',
+  'toolbar.sendTestDisabled': 'Save the newsletter first',
   'toolbar.saving': 'Saving...',
 
   // ── Editor Canvas ────────────────────────────────────

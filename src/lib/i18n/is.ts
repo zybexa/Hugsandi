@@ -89,6 +89,9 @@ const is: Record<string, string> = {
   'editor.notFound': 'Fréttabréf fannst ekki',
   'editor.backToDashboard': 'Til baka á yfirlitssíðu',
   'editor.saveFailed': 'Vistun mistókst. Vinsamlegast reyndu aftur.',
+  'editor.saveBeforeTest': 'Vistaðu fréttabréfið áður en þú sendir prófun.',
+  'editor.sendTestOk': 'Prófun send til {count} viðtakanda.',
+  'editor.sendTestFailed': 'Prófsending mistókst.',
   'editor.dismiss': 'Loka',
   'editor.unsavedTitle': 'Óvistaðar breytingar',
   'editor.unsavedMessage': 'Þú átt óvistaðar breytingar. Viltu vista áður en þú ferð?',
@@ -98,6 +101,9 @@ const is: Record<string, string> = {
   // ── Block Toolbar ────────────────────────────────────
   'toolbar.contentCard': '+ Efnisspjald',
   'toolbar.exit': 'Hætta',
+  'toolbar.sendTest': 'Prófsending',
+  'toolbar.sendingTest': 'Sendi…',
+  'toolbar.sendTestDisabled': 'Vistaðu fréttabréfið fyrst',
   'toolbar.saving': 'Vistar...',
 
   // ── Editor Canvas ────────────────────────────────────

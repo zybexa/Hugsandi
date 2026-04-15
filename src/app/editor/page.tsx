@@ -154,6 +154,9 @@ function EditorContent() {
   const [editingName, setEditingName] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
+  const [sendingTest, setSendingTest] = useState(false);
+  const [sendTestResult, setSendTestResult] = useState<{ ok: boolean; message: string } | null>(null);
+
   const currentBgColor = design.globalStyle?.backgroundColor || '#FFECE5';
 
   // Sent state
@@ -242,6 +245,40 @@ function EditorContent() {
     }
   }, [design, t]);
 
+  // Test-send: fires the current design to all subscribers with a [TEST]
+  // subject prefix. Does not mark the newsletter as sent — re-runnable.
+  const handleSendTest = useCallback(async () => {
+    const id = design.id;
+    if (!id) {
+      setSendTestResult({ ok: false, message: t('editor.saveBeforeTest') });
+      return;
+    }
+    setSendingTest(true);
+    setSendTestResult(null);
+    try {
+      const res = await fetch('/api/send-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ designId: id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSendTestResult({ ok: false, message: data.error || t('editor.sendTestFailed') });
+      } else if (data.sent > 0 && data.failed === 0) {
+        setSendTestResult({ ok: true, message: t('editor.sendTestOk', { count: data.sent }) });
+      } else if (data.sent > 0) {
+        setSendTestResult({ ok: false, message: `${data.sent}/${data.sent + data.failed} — ${data.failed} failed` });
+      } else {
+        const detail = Array.isArray(data.errors) && data.errors.length > 0 ? data.errors[0] : t('editor.sendTestFailed');
+        setSendTestResult({ ok: false, message: detail });
+      }
+    } catch {
+      setSendTestResult({ ok: false, message: t('editor.sendTestFailed') });
+    } finally {
+      setSendingTest(false);
+    }
+  }, [design.id, t]);
+
   // Ensure design is saved (for image uploads on unsaved designs)
   const handleEnsureSaved = useCallback(async (): Promise<string | undefined> => {
     if (design.id) return design.id;
@@ -319,6 +356,9 @@ function EditorContent() {
           onSave={handleSave}
           saving={saving}
           readOnly={isSent}
+          onSendTest={handleSendTest}
+          sendingTest={sendingTest}
+          canSendTest={!!design.id}
           onExit={() => {
             if (isDirtyRef.current) {
               setShowExitModal(true);
@@ -334,6 +374,17 @@ function EditorContent() {
         <div className="bg-skin-danger-bg border-b border-skin-danger-border text-skin-danger text-sm px-4 py-2 flex items-center justify-between">
           {saveError}
           <button onClick={() => setSaveError('')} className="text-skin-danger hover:text-skin-text-primary ml-4">{t('editor.dismiss')}</button>
+        </div>
+      )}
+
+      {sendTestResult && (
+        <div className={`border-b text-sm px-4 py-2 flex items-center justify-between ${
+          sendTestResult.ok
+            ? 'bg-skin-success-bg border-skin-success-border text-skin-success'
+            : 'bg-skin-danger-bg border-skin-danger-border text-skin-danger'
+        }`}>
+          <span>{sendTestResult.message}</span>
+          <button onClick={() => setSendTestResult(null)} className="hover:opacity-80 ml-4">{t('editor.dismiss')}</button>
         </div>
       )}
 
