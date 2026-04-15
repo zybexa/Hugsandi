@@ -3,7 +3,7 @@
 import { Suspense, useReducer, useState, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { arrayMove } from '@dnd-kit/sortable';
-import { BlockData, BlockStyle, BlockType, Design, DesignImage } from '@/types/design';
+import { BlockData, BlockStyle, BlockType, Design, DesignImage, GlobalStyle } from '@/types/design';
 import { DEFAULT_GLOBAL_STYLE, createDefaultBlock, createDefaultBlocks, getSavedGlobalStyle, SavedDefaults } from '@/lib/defaults';
 import { useTranslation } from '@/lib/i18n';
 import BlockToolbar from '@/components/editor/BlockToolbar';
@@ -18,6 +18,7 @@ type Action =
   | { type: 'REORDER_BLOCKS'; activeId: string; overId: string }
   | { type: 'UPDATE_BLOCK_DATA'; blockId: string; data: BlockData }
   | { type: 'UPDATE_BLOCK_STYLE'; blockId: string; style: BlockStyle }
+  | { type: 'UPDATE_GLOBAL_STYLE'; style: Partial<GlobalStyle> }
   | { type: 'LOAD_DESIGN'; design: Design }
   | { type: 'SET_NAME'; name: string }
   | { type: 'SET_ID'; id: string }
@@ -25,7 +26,7 @@ type Action =
 
 const DIRTY_ACTIONS = new Set([
   'ADD_BLOCK', 'REMOVE_BLOCK', 'REORDER_BLOCKS',
-  'UPDATE_BLOCK_DATA', 'UPDATE_BLOCK_STYLE', 'SET_NAME',
+  'UPDATE_BLOCK_DATA', 'UPDATE_BLOCK_STYLE', 'UPDATE_GLOBAL_STYLE', 'SET_NAME',
 ]);
 
 function reducer(state: Design, action: Action): Design {
@@ -72,6 +73,8 @@ function reducer(state: Design, action: Action): Design {
           b.id === action.blockId ? { ...b, style: action.style } : b
         ),
       };
+    case 'UPDATE_GLOBAL_STYLE':
+      return { ...state, globalStyle: { ...state.globalStyle, ...action.style } };
     case 'LOAD_DESIGN':
       return action.design;
     case 'SET_NAME':
@@ -382,8 +385,29 @@ function EditorContent() {
         </div>
 
         {/* Right: live preview */}
-        <div className="w-[648px] border-l border-skin-border">
-          <LivePreview design={design} />
+        <div className="w-[648px] border-l border-skin-border flex flex-col">
+          <div className="flex items-center gap-3 px-4 py-2 border-b border-skin-border">
+            <label className="text-xs font-medium text-skin-text-secondary uppercase tracking-[0.04em]">
+              {t('editor.backgroundColor')}
+            </label>
+            <input
+              type="color"
+              value={design.globalStyle?.backgroundColor || '#FFECE5'}
+              onChange={(e) => dispatch({ type: 'UPDATE_GLOBAL_STYLE', style: { backgroundColor: e.target.value } })}
+              disabled={isSent}
+              className="w-8 h-8 rounded border border-skin-border bg-transparent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            />
+            <input
+              type="text"
+              value={design.globalStyle?.backgroundColor || '#FFECE5'}
+              onChange={(e) => dispatch({ type: 'UPDATE_GLOBAL_STYLE', style: { backgroundColor: e.target.value } })}
+              disabled={isSent}
+              className="px-2 py-1 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm w-24 font-mono disabled:opacity-40 disabled:cursor-not-allowed"
+            />
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <LivePreview design={design} />
+          </div>
         </div>
       </div>
 

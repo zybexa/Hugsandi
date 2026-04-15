@@ -83,6 +83,7 @@ const is: Record<string, string> = {
   'editor.nameLabel': 'Heiti',
   'editor.namePlaceholder': 'Heiti fréttabréfs',
   'editor.changeName': 'Breyta',
+  'editor.backgroundColor': 'Bakgrunnur',
   'editor.sentBanner': 'Þetta fréttabréf var sent þann {date}. Það er skrifvarið.',
   'editor.notFound': 'Fréttabréf fannst ekki',
   'editor.backToDashboard': 'Til baka á yfirlitssíðu',
