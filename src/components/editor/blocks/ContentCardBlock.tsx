@@ -109,19 +109,27 @@ export default function ContentCardBlock({ data, onChange, readOnly }: ContentCa
             className="px-3 py-1.5 bg-skin-input border border-skin-border rounded text-skin-text-primary text-sm placeholder-skin-text-muted disabled:opacity-60 disabled:cursor-not-allowed"
           />
         </div>
-        <div className="flex items-center gap-1 mt-2">
-          {['#a0a7e4', '#f2cc8f', '#e4a0da', '#a0d4b4'].map((color) => (
-            <button
-              key={color}
-              type="button"
-              onClick={() => onChange({ ...data, ctaBackgroundColor: color })}
-              disabled={readOnly}
-              aria-label={`${t('card.ctaColor')} ${color}`}
-              aria-pressed={data.ctaBackgroundColor === color}
-              className={`w-7 h-7 rounded-full border-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${data.ctaBackgroundColor === color ? 'border-blue-500 scale-110' : 'border-skin-border'}`}
-              style={{ backgroundColor: color }}
-            />
-          ))}
+        <div className="flex items-center gap-2 mt-3.5">
+          <div className="flex items-center gap-1">
+            {['#a0a7e4', '#f2cc8f', '#e4a0da', '#a0d4b4'].map((color) => (
+              <button
+                key={color}
+                type="button"
+                onClick={() => onChange({ ...data, ctaBackgroundColor: color })}
+                disabled={readOnly}
+                aria-label={`${t('card.ctaColor')} ${color}`}
+                aria-pressed={data.ctaBackgroundColor === color}
+                className={`w-7 h-7 rounded-full border-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${data.ctaBackgroundColor?.toLowerCase() === color.toLowerCase() ? 'border-blue-500 scale-110' : 'border-skin-border'}`}
+                style={{ backgroundColor: color }}
+              />
+            ))}
+          </div>
+          <ColorPickerInput
+            value={data.ctaBackgroundColor}
+            onChange={(v) => onChange({ ...data, ctaBackgroundColor: v })}
+            disabled={readOnly}
+            fallback="#a0a7e4"
+          />
         </div>
       </div>
 
