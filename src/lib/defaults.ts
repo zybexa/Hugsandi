@@ -75,7 +75,7 @@ export function createDefaultBlock(type: BlockType, defaults?: SavedDefaults): B
         viewInBrowserBold: false,
         viewInBrowserItalic: false,
         viewInBrowserUnderline: false,
-        headline: 'Test Headline',
+        headline: 'Hefur þú hugsað út í það að...',
         headlineColor: '#1f0318',
         headlineFont: 'Arial, Helvetica, sans-serif',
         headlineSize: '28px',

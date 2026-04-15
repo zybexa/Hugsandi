@@ -17,6 +17,96 @@ interface FooterBlockProps {
 export default function FooterBlock({ data, onChange, readOnly }: FooterBlockProps) {
   const { t } = useTranslation();
   const [savedDefault, setSavedDefault] = useState(false);
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+
+  async function deleteStorageFile(url: string) {
+    if (!url || !url.includes('/newsletter-images/')) return;
+    try {
+      await fetch('/api/upload/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+    } catch { /* ignore */ }
+  }
+
+  async function handleUploadLogo(
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: 'logoSrc' | 'orgLogoSrc' | 'churchLogoSrc',
+  ) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingKey(field);
+    try {
+      const oldUrl = data[field];
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      if (res.ok) {
+        const { url } = await res.json();
+        onChange({ ...data, [field]: url });
+        // Only delete if the old URL was a previously uploaded asset
+        if (oldUrl && oldUrl.includes('/newsletter-images/')) deleteStorageFile(oldUrl);
+      }
+    } finally {
+      setUploadingKey(null);
+      e.target.value = '';
+    }
+  }
+
+  function handleResetLogo(field: 'logoSrc' | 'orgLogoSrc' | 'churchLogoSrc') {
+    const oldUrl = data[field];
+    onChange({ ...data, [field]: '' });
+    if (oldUrl && oldUrl.includes('/newsletter-images/')) deleteStorageFile(oldUrl);
+  }
+
+  function renderLogoField(
+    label: string,
+    field: 'logoSrc' | 'orgLogoSrc' | 'churchLogoSrc',
+    defaultPath: string,
+    alt: string,
+  ) {
+    const current = data[field];
+    const displaySrc = current || defaultPath;
+    const isCustom = !!current && current.includes('/newsletter-images/');
+    const isUploading = uploadingKey === field;
+    return (
+      <div>
+        <label className="text-xs text-skin-text-secondary uppercase tracking-wide">{label}</label>
+        <div className="mt-1 flex items-center gap-3">
+          <label className="px-3 py-1.5 bg-skin-accent-bg-light border border-skin-accent-border rounded text-sm font-semibold text-skin-text-primary cursor-pointer hover:bg-skin-accent-bg transition-colors">
+            {isUploading
+              ? t('common.uploading')
+              : isCustom
+                ? t('footer.changeLogo')
+                : t('footer.uploadLogo')}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleUploadLogo(e, field)}
+              disabled={readOnly || isUploading}
+              className="hidden"
+            />
+          </label>
+          <div className="relative">
+            <img src={displaySrc} alt={alt} className="h-10 object-contain" />
+            {isCustom && !readOnly && (
+              <button
+                type="button"
+                onClick={() => handleResetLogo(field)}
+                className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-skin-danger-bg hover:bg-skin-danger border border-skin-danger-bg hover:border-skin-danger rounded-full flex items-center justify-center transition-colors"
+                title={t('footer.resetLogo')}
+              >
+                <svg width="8" height="8" viewBox="0 0 16 16" fill="white">
+                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3">
@@ -31,13 +121,8 @@ export default function FooterBlock({ data, onChange, readOnly }: FooterBlockPro
         />
       </div>
 
-      {/* Logo */}
-      <div>
-        <label className="text-xs text-skin-text-secondary uppercase tracking-wide">{t('footer.orgLogo')}</label>
-        <div className="mt-1">
-          <img src="/logo2.png" alt="Organization logo" className="h-10 object-contain" />
-        </div>
-      </div>
+      {/* Organization logo (top-left 56x56) */}
+      {renderLogoField(t('footer.orgLogo'), 'logoSrc', '/logo2.png', 'Organization logo')}
 
       {/* Contact email */}
       <div>
@@ -55,20 +140,10 @@ export default function FooterBlock({ data, onChange, readOnly }: FooterBlockPro
       </div>
 
       {/* Slogan */}
-      <div>
-        <label className="text-xs text-skin-text-secondary uppercase tracking-wide">{t('footer.slogan')}</label>
-        <div className="mt-1">
-          <img src="/slogan.png" alt="Slogan" className="h-10 object-contain" />
-        </div>
-      </div>
+      {renderLogoField(t('footer.slogan'), 'orgLogoSrc', '/slogan.png', 'Slogan')}
 
       {/* Church Logo */}
-      <div>
-        <label className="text-xs text-skin-text-secondary uppercase tracking-wide">{t('footer.churchLogo')}</label>
-        <div className="mt-1">
-          <img src="/kirkjan.png" alt="Church logo" className="h-10 object-contain" />
-        </div>
-      </div>
+      {renderLogoField(t('footer.churchLogo'), 'churchLogoSrc', '/kirkjan.png', 'Church logo')}
 
       {/* Links */}
       <div>
