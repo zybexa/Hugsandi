@@ -36,7 +36,7 @@ interface SortableBlockProps {
 
 const SortableBlock = memo(function SortableBlock({ block, blockId, isSelected, onSelectBlock, onBlockDataChange, onBlockStyleChange, onRemoveBlock, readOnly, availableImages, defaultShowStyling }: SortableBlockProps) {
   const { t } = useTranslation();
-  const [collapsed, setCollapsed] = useState(block.data.type === 'header' || block.data.type === 'footer');
+  const [collapsed, setCollapsed] = useState(false);
   const {
     attributes,
     listeners,
