@@ -104,6 +104,8 @@ const en: Record<string, string> = {
   'toolbar.sendTest': 'Send test',
   'toolbar.sendingTest': 'Sending…',
   'toolbar.sendTestDisabled': 'Save the newsletter first',
+  'toolbar.downloadHtml': 'Download HTML',
+  'toolbar.downloadHtmlTitle': 'Download the rendered HTML for upload to Email on Acid / Litmus',
   'toolbar.saving': 'Saving...',
 
   // ── Editor Canvas ────────────────────────────────────

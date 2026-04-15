@@ -104,6 +104,8 @@ const is: Record<string, string> = {
   'toolbar.sendTest': 'Prófsending',
   'toolbar.sendingTest': 'Sendi…',
   'toolbar.sendTestDisabled': 'Vistaðu fréttabréfið fyrst',
+  'toolbar.downloadHtml': 'Sækja HTML',
+  'toolbar.downloadHtmlTitle': 'Sækja HTML fréttabréfsins fyrir Email on Acid / Litmus',
   'toolbar.saving': 'Vistar...',
 
   // ── Editor Canvas ────────────────────────────────────

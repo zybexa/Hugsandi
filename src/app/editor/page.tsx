@@ -11,6 +11,7 @@ import EditorCanvas from '@/components/editor/EditorCanvas';
 import LivePreview from '@/components/editor/LivePreview';
 import ImageGalleryPanel from '@/components/editor/ImageGalleryPanel';
 import ColorPickerInput from '@/components/editor/ColorPickerInput';
+import { renderEmailHtml } from '@/lib/render-email';
 
 
 type Action =
@@ -279,6 +280,39 @@ function EditorContent() {
     }
   }, [design.id, t]);
 
+  // Download the fully-rendered email HTML so the user can upload it to
+  // external testing services like Email on Acid / Litmus. Uses the current
+  // origin as the baseUrl so image src attributes resolve to absolute URLs
+  // (e.g. https://frettabref.vercel.app/logo2.png) that Email on Acid can
+  // fetch when rendering the preview.
+  const handleDownloadHtml = useCallback(() => {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const viewUrl = design.id ? `${baseUrl}/view/${design.id}` : '';
+    const designWithViewUrl: Design = {
+      ...design,
+      blocks: design.blocks.map((block) => {
+        if (block.data.type === 'header' && block.data.viewInBrowserText && viewUrl) {
+          return { ...block, data: { ...block.data, viewInBrowserUrl: viewUrl } };
+        }
+        return block;
+      }),
+    };
+    const html = renderEmailHtml(designWithViewUrl, baseUrl);
+    const slug = (design.name || 'newsletter')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || 'newsletter';
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${slug}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [design]);
+
   // Ensure design is saved (for image uploads on unsaved designs)
   const handleEnsureSaved = useCallback(async (): Promise<string | undefined> => {
     if (design.id) return design.id;
@@ -359,6 +393,7 @@ function EditorContent() {
           onSendTest={handleSendTest}
           sendingTest={sendingTest}
           canSendTest={!!design.id}
+          onDownloadHtml={handleDownloadHtml}
           onExit={() => {
             if (isDirtyRef.current) {
               setShowExitModal(true);

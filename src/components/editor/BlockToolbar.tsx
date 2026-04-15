@@ -12,11 +12,12 @@ interface BlockToolbarProps {
   onSendTest?: () => void;
   sendingTest?: boolean;
   canSendTest?: boolean;
+  onDownloadHtml?: () => void;
 }
 
 const cardBtnClass = "px-3 py-1.5 bg-blue-800/60 hover:bg-blue-700/70 text-blue-100 text-sm font-semibold rounded border border-blue-600 transition-all active:scale-90";
 
-export default function BlockToolbar({ onAddBlock, onSave, saving, readOnly, onExit, onSendTest, sendingTest, canSendTest }: BlockToolbarProps) {
+export default function BlockToolbar({ onAddBlock, onSave, saving, readOnly, onExit, onSendTest, sendingTest, canSendTest, onDownloadHtml }: BlockToolbarProps) {
   const { t } = useTranslation();
 
   return (
@@ -33,6 +34,15 @@ export default function BlockToolbar({ onAddBlock, onSave, saving, readOnly, onE
             className="px-4 py-1.5 bg-amber-700/70 hover:bg-amber-600/80 text-amber-50 text-sm font-semibold rounded border border-amber-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {sendingTest ? t('toolbar.sendingTest') : t('toolbar.sendTest')}
+          </button>
+        )}
+        {onDownloadHtml && (
+          <button
+            onClick={onDownloadHtml}
+            title={t('toolbar.downloadHtmlTitle')}
+            className="px-4 py-1.5 bg-slate-700/70 hover:bg-slate-600/80 text-slate-50 text-sm font-semibold rounded border border-slate-600 transition-all"
+          >
+            {t('toolbar.downloadHtml')}
           </button>
         )}
         <button
